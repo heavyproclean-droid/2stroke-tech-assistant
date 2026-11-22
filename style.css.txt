@@ -1,0 +1,60 @@
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#121212;
+    color:white;
+}
+
+header{
+    text-align:center;
+    background:#b30000;
+    padding:20px;
+}
+
+.container{
+    padding:15px;
+}
+
+.card{
+    background:#1e1e1e;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:20px;
+    box-shadow:0 0 10px rgba(0,0,0,.4);
+}
+
+h2{
+    color:#ff4444;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    margin-bottom:10px;
+    border:none;
+    border-radius:8px;
+}
+
+button{
+    width:100%;
+    background:#cc0000;
+    color:white;
+    border:none;
+    padding:12px;
+    border-radius:8px;
+    font-size:16px;
+}
+
+button:hover{
+    background:#ff0000;
+}
+
+#results,
+#modelResults,
+#savedLogs{
+    margin-top:15px;
+    line-height:1.5;
+}

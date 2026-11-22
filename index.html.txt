@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RedMax Tech Assistant</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#b30000">
+
+</head>
+
+<body>
+
+<header>
+    <h1>REDMAX TECH ASSISTANT</h1>
+    <p>Field Technician Utility</p>
+</header>
+
+<div class="container">
+
+<section class="card">
+    <h2>Quick Diagnostics</h2>
+
+    <select id="symptom">
+        <option value="">Select Symptom</option>
+        <option>Won't Start</option>
+        <option>Hard Starting</option>
+        <option>No Spark</option>
+        <option>Fuel Leak</option>
+        <option>Bogging</option>
+        <option>Overheating</option>
+        <option>Poor Idle</option>
+    </select>
+
+    <button onclick="runDiagnostic()">Diagnose</button>
+
+    <div id="results"></div>
+</section>
+
+<section class="card">
+    <h2>Model Lookup</h2>
+
+    <input
+        type="text"
+        id="modelSearch"
+        placeholder="Enter model number">
+
+    <button onclick="lookupModel()">Search</button>
+<button onclick="startVoiceSearch()">
+🎤 Voice Input
+</button>
+
+    <div id="modelResults"></div>
+</section>
+
+<section class="card">
+
+<h2>QR Code Scanner</h2>
+
+<div id="reader"></div>
+
+<button onclick="startQRScanner()">
+Scan QR
+</button>
+
+<div id="qrResults"></div>
+
+</section>
+
+<section class="card">
+    <h2>Service Log</h2>
+
+    <input id="machine" placeholder="Machine">
+
+    <textarea
+    id="repairNotes"
+    placeholder="Repair performed">
+    </textarea>
+
+    <button onclick="saveLog()">
+        Save Service Record
+    </button>
+
+    <div id="savedLogs"></div>
+
+</section>
+
+</div>
+
+<script src="app.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+ navigator.serviceWorker.register('./service-worker.js');
+}
+</script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+</body>
+</html>

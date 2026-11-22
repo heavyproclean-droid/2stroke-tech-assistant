@@ -1,86 +1,14 @@
-function startDiagnosis() {
+/* =====================================
+   REDMAX TECH ASSISTANT
+   APP.JS
+===================================== */
 
- const symptom =
- document.getElementById("symptom").value;
-
- if(symptom === "nostart") {
-
-  document.getElementById("questions").innerHTML = `
-    <p>Does it have spark?</p>
-
-    <button onclick="sparkAnswer(true)">
-      Yes
-    </button>
-
-    <button onclick="sparkAnswer(false)">
-      No
-    </button>
-  `;
- }
-}
-
-function sparkAnswer(hasSpark){
-
- if(!hasSpark){
-
-   document.getElementById("questions").innerHTML =
-   "Check ignition module, kill switch, spark plug.";
-
-   return;
- }
-
- document.getElementById("questions").innerHTML = `
-   <p>Compression above 120 PSI?</p>
-
-   <button onclick="compressionAnswer(true)">
-   Yes
-   </button>
-
-   <button onclick="compressionAnswer(false)">
-   No
-   </button>
- `;
-}
-
-function compressionAnswer(good){
-
- if(!good){
-
-  document.getElementById("questions").innerHTML =
-  "Possible scored cylinder, worn rings, leaking gasket.";
-
-  return;
- }
-
- document.getElementById("questions").innerHTML =
- "Inspect fuel system, carburetor, and fuel filter.";
-}
-
-let deferredPrompt;
-
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-
-  deferredPrompt = e;
-
-  document.getElementById("installBtn").hidden = false;
-});
-
-document.getElementById("installBtn").addEventListener("click", async () => {
-
-  document.getElementById("installBtn").hidden = true;
-
-  deferredPrompt.prompt();
-
-  const result = await deferredPrompt.userChoice;
-
-  console.log(result.outcome);
-
-  deferredPrompt = null;
-});
+/* ---------- ONLINE STATUS ---------- */
 
 function updateConnectionStatus() {
     const status = document.getElementById("connectionStatus");
+
+    if (!status) return;
 
     if (navigator.onLine) {
         status.textContent = "🟢 Online";
@@ -94,195 +22,273 @@ function updateConnectionStatus() {
 window.addEventListener("online", updateConnectionStatus);
 window.addEventListener("offline", updateConnectionStatus);
 
-updateConnectionStatus();
+/* ---------- INSTALL PROMPT ---------- */
 
-function startQRScanner(){
+let deferredPrompt = null;
 
-const scanner =
-new Html5Qrcode("reader");
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
 
-scanner.start(
-{ facingMode: "environment" },
+    deferredPrompt = e;
 
-{
-fps:10,
-qrbox:250
-},
+    const installBtn = document.getElementById("installBtn");
 
-(decodedText)=>{
-
-document.getElementById(
-"qrResults"
-).innerHTML =
-decodedText;
-
-scanner.stop();
-
-},
-
-(error)=>{
-console.log(error);
-}
-);
-}
-
-function startVoiceSearch() {
-
-const recognition =
-new (window.SpeechRecognition ||
-window.webkitSpeechRecognition)();
-
-recognition.lang = "en-US";
-
-recognition.start();
-
-recognition.onresult = function(event) {
-
-const speech =
-event.results[0][0].transcript;
-
-document.getElementById("modelSearch").value =
-speech.toUpperCase();
-
-lookupModel();
-};
-
-}
-function runDiagnostic(){
-
-let symptom =
-document.getElementById("symptom").value;
-
-let result = "";
-
-switch(symptom){
-
-case "Won't Start":
-result =
-"Check fuel, spark plug, ignition coil, fuel filter, carburetor.";
-break;
-
-case "Hard Starting":
-result =
-"Inspect fuel lines, carburetor diaphragm, choke operation.";
-break;
-
-case "No Spark":
-result =
-"Check plug, ignition module, kill switch wiring.";
-break;
-
-case "Fuel Leak":
-result =
-"Inspect fuel lines, tank vent, carburetor gaskets.";
-break;
-
-case "Bogging":
-result =
-"Check fuel delivery, carburetor adjustment and exhaust screen.";
-break;
-
-case "Overheating":
-result =
-"Clean cooling fins and inspect fuel mixture.";
-break;
-
-case "Poor Idle":
-result =
-"Inspect idle adjustment and carburetor condition.";
-break;
-
-default:
-result =
-"Select a symptom.";
-}
-
-document.getElementById("results").innerHTML =
-result;
-}
-
-function lookupModel(){
-
-let model =
-document.getElementById("modelSearch")
-.value
-.toUpperCase();
-
-const models = {
-
-"EBZ8560":{
-engine:"75.6cc",
-fuel:"50:1",
-plug:"NGK CMR7H"
-},
-
-"EBZ8500":{
-engine:"75.6cc",
-fuel:"50:1",
-plug:"NGK CMR7H"
-},
-
-"BCZ260TS":{
-engine:"25.4cc",
-fuel:"50:1",
-plug:"NGK BPMR8Y"
-}
-
-};
-
-let output =
-models[model]
-? JSON.stringify(models[model],null,2)
-: "Model not found";
-
-document.getElementById("modelResults")
-.innerHTML =
-"<pre>" + output + "</pre>";
-}
-
-function saveLog(){
-
-const machine =
-document.getElementById("machine").value;
-
-const notes =
-document.getElementById("repairNotes").value;
-
-let logs =
-JSON.parse(
-localStorage.getItem("redmaxLogs")
-) || [];
-
-logs.push({
-date:new Date().toLocaleDateString(),
-machine,
-notes
+    if (installBtn) {
+        installBtn.hidden = false;
+    }
 });
 
-localStorage.setItem(
-"redmaxLogs",
-JSON.stringify(logs)
-);
+async function installApp() {
 
-showLogs();
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+
+    await deferredPrompt.userChoice;
+
+    deferredPrompt = null;
+
+    document.getElementById("installBtn").hidden = true;
 }
 
-function showLogs(){
+/* ---------- DIAGNOSTICS ---------- */
 
-let logs =
-JSON.parse(
-localStorage.getItem("redmaxLogs")
-) || [];
+function startDiagnosis() {
 
-document.getElementById("savedLogs")
-.innerHTML =
-logs.map(log =>
-`<p>
-${log.date}<br>
-${log.machine}<br>
-${log.notes}
-</p>`
-).join("");
+    const symptom =
+        document.getElementById("symptom").value;
+
+    const questions =
+        document.getElementById("questions");
+
+    const result =
+        document.getElementById("diagnosticResult");
+
+    questions.innerHTML = "";
+    result.innerHTML = "";
+
+    switch (symptom) {
+
+        case "nostart":
+
+            questions.innerHTML = `
+                <p>Does the engine have spark?</p>
+
+                <button onclick="sparkAnswer(true)">Yes</button>
+                <button onclick="sparkAnswer(false)">No</button>
+            `;
+            break;
+
+        case "dies":
+
+            result.innerHTML =
+                "Inspect fuel filter, carburetor diaphragm, fuel lines, and tank vent.";
+
+            break;
+
+        case "nospark":
+
+            result.innerHTML =
+                "Inspect spark plug, ignition coil, wiring, and stop switch.";
+
+            break;
+
+        case "overheat":
+
+            result.innerHTML =
+                "Inspect cooling fins, air flow, exhaust restriction, and fuel mixture.";
+
+            break;
+    }
 }
 
-showLogs();
+function sparkAnswer(hasSpark) {
+
+    const questions =
+        document.getElementById("questions");
+
+    const result =
+        document.getElementById("diagnosticResult");
+
+    if (!hasSpark) {
+
+        questions.innerHTML = "";
+
+        result.innerHTML =
+            "Ignition fault suspected. Check spark plug, kill switch, wiring, and ignition module.";
+
+        return;
+    }
+
+    questions.innerHTML = `
+        <p>Compression above 120 PSI?</p>
+
+        <button onclick="compressionAnswer(true)">
+            Yes
+        </button>
+
+        <button onclick="compressionAnswer(false)">
+            No
+        </button>
+    `;
+}
+
+function compressionAnswer(goodCompression) {
+
+    document.getElementById("questions").innerHTML = "";
+
+    if (!goodCompression) {
+
+        document.getElementById("diagnosticResult").innerHTML =
+            "Low compression. Inspect piston, cylinder, rings, crank seals, and gaskets.";
+
+        return;
+    }
+
+    document.getElementById("diagnosticResult").innerHTML =
+        "Spark and compression are OK. Focus on carburetor, fuel delivery, fuel filter, and fuel lines.";
+}
+
+/* ---------- SERVICE LOG ---------- */
+
+function getLogs() {
+    return JSON.parse(
+        localStorage.getItem("serviceLogs") || "[]"
+    );
+}
+
+function saveLogs(logs) {
+    localStorage.setItem(
+        "serviceLogs",
+        JSON.stringify(logs)
+    );
+}
+
+function saveLog() {
+
+    const machine =
+        document.getElementById("machine").value.trim();
+
+    const notes =
+        document.getElementById("notes").value.trim();
+
+    if (!machine || !notes) {
+        alert("Machine and notes are required.");
+        return;
+    }
+
+    const logs = getLogs();
+
+    logs.push({
+        machine,
+        notes,
+        date: new Date().toISOString()
+    });
+
+    saveLogs(logs);
+
+    alert("Log saved.");
+
+    document.getElementById("machine").value = "";
+    document.getElementById("notes").value = "";
+}
+
+/* ---------- EXPORT ---------- */
+
+function exportLogs() {
+
+    const logs = getLogs();
+
+    const blob = new Blob(
+        [JSON.stringify(logs, null, 2)],
+        {
+            type: "application/json"
+        }
+    );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+    link.download = "RedMaxServiceLogs.json";
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
+
+/* ---------- BACKUP ---------- */
+
+function backupLogs() {
+
+    const backup = {
+        exportDate:
+            new Date().toISOString(),
+        logs: getLogs()
+    };
+
+    const blob = new Blob(
+        [JSON.stringify(backup, null, 2)],
+        {
+            type: "application/json"
+        }
+    );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const link =
+        document.createElement("a");
+
+    link.href = url;
+    link.download = "RedMaxBackup.json";
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
+
+/* ---------- RESTORE ---------- */
+
+function restoreBackup() {
+
+    const file =
+        document.getElementById("restoreFile").files[0];
+
+    if (!file) {
+        alert("Select a backup file.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+
+        const backup =
+            JSON.parse(reader.result);
+
+        saveLogs(backup.logs || []);
+
+        alert("Backup restored.");
+    };
+
+    reader.readAsText(file);
+}
+
+/* ---------- STARTUP ---------- */
+
+window.addEventListener("load", () => {
+
+    updateConnectionStatus();
+
+    const installBtn =
+        document.getElementById("installBtn");
+
+    if (installBtn) {
+        installBtn.addEventListener(
+            "click",
+            installApp
+        );
+    }
+});

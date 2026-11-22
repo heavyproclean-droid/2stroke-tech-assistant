@@ -58,3 +58,17 @@ button:hover{
     margin-top:15px;
     line-height:1.5;
 }
+.status{
+  padding:10px;
+  text-align:center;
+  font-weight:bold;
+  color:white;
+}
+
+.online{
+  background:#2e7d32;
+}
+
+.offline{
+  background:#c62828;
+}

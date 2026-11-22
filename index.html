@@ -6,99 +6,506 @@
 
 <title>RedMax Tech Assistant</title>
 
-<link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#d32f2f">
 
-<meta name="theme-color" content="#b30000">
+<style>
+body{
+    font-family:Arial,sans-serif;
+    margin:0;
+    padding:20px;
+    background:#f5f5f5;
+}
 
+.container{
+    max-width:700px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
+
+h1,h2{
+    color:#c62828;
+}
+
+button{
+    padding:10px 15px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    background:#c62828;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#a00000;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    margin-bottom:10px;
+    box-sizing:border-box;
+}
+
+.status{
+    color:white;
+    padding:10px;
+    text-align:center;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.online{
+    background:#2e7d32;
+}
+
+.offline{
+    background:#c62828;
+}
+
+#diagnosticResult{
+    margin-top:10px;
+    font-weight:bold;
+}
+</style>
 </head>
-
 <body>
-
-<header>
-    <h1>REDMAX TECH ASSISTANT</h1>
-    <p>Field Technician Utility</p>
-</header>
 
 <div class="container">
 
-<section class="card">
-    <h2>Quick Diagnostics</h2>
+<div id="connectionStatus" class="status online">
+🟢 Online
+</div>
 
-    <select id="symptom">
-        <option value="">Select Symptom</option>
-        <option>Won't Start</option>
-        <option>Hard Starting</option>
-        <option>No Spark</option>
-        <option>Fuel Leak</option>
-        <option>Bogging</option>
-        <option>Overheating</option>
-        <option>Poor Idle</option>
-    </select>
+<h1>RedMax Tech Assistant</h1>
 
-    <button onclick="runDiagnostic()">Diagnose</button>
-
-    <div id="results"></div>
-</section>
-
-<section class="card">
-    <h2>Model Lookup</h2>
-
-    <input
-        type="text"
-        id="modelSearch"
-        placeholder="Enter model number">
-
-    <button onclick="lookupModel()">Search</button>
-<button onclick="startVoiceSearch()">
-🎤 Voice Input
+<button id="installBtn" hidden>
+📲 Install App
 </button>
 
-    <div id="modelResults"></div>
-</section>
+<div class="card">
+<h2>Guided Diagnostics</h2>
 
-<section class="card">
+<select id="symptom">
+<option value="">Select Symptom</option>
+<option value="nostart">Won't Start</option>
+<option value="dies">Starts Then Dies</option>
+<option value="nospark">No Spark</option>
+<option value="overheat">Overheating</option>
+</select>
 
-<h2>QR Code Scanner</h2>
-
-<div id="reader"></div>
-
-<button onclick="startQRScanner()">
-Scan QR
+<button onclick="startDiagnosis()">
+Begin Diagnosis
 </button>
 
-<div id="qrResults"></div>
+<div id="questions"></div>
 
-</section>
+<div id="diagnosticResult"></div>
+</div>
 
-<section class="card">
-    <h2>Service Log</h2>
+<div class="card">
+<h2>Service Log</h2>
 
-    <input id="machine" placeholder="Machine">
+<label>Machine</label>
+<input id="machine" placeholder="Enter model">
 
-    <textarea
-    id="repairNotes"
-    placeholder="Repair performed">
-    </textarea>
+<label>Repair Notes</label>
+<textarea id="notes" rows="5"></textarea>
 
-    <button onclick="saveLog()">
-        Save Service Record
-    </button>
+<button onclick="saveLog()">
+Save Log
+</button>
 
-    <div id="savedLogs"></div>
+<button onclick="exportLogs()">
+Export Logs
+</button>
 
-</section>
+<button onclick="backupLogs()">
+Backup All Data
+</button>
+
+<hr>
+
+<input type="file"
+       id="restoreFile"
+       accept=".json">
+
+<button onclick="restoreBackup()">
+Restore Backup
+</button>
+</div>
 
 </div>
 
-<script src="app.js"></script>
-
 <script>
-if ('serviceWorker' in navigator) {
- navigator.serviceWorker.register('./service-worker.js');
+
+/* ==========================
+   ONLINE / OFFLINE STATUS
+========================== */
+
+function updateConnectionStatus(){
+
+    const status =
+    document.getElementById("connectionStatus");
+
+    if(navigator.onLine){
+
+        status.textContent =
+        "🟢 Online";
+
+        status.className =
+        "status online";
+
+    } else {
+
+        status.textContent =
+        "🔴 Offline";
+
+        status.className =
+        "status offline";
+    }
 }
+
+window.addEventListener(
+"online",
+updateConnectionStatus
+);
+
+window.addEventListener(
+"offline",
+updateConnectionStatus
+);
+
+updateConnectionStatus();
+
+/* ==========================
+   INSTALL SUPPORT
+========================== */
+
+let deferredPrompt;
+
+window.addEventListener(
+"beforeinstallprompt",
+(e)=>{
+
+    e.preventDefault();
+
+    deferredPrompt = e;
+
+    document.getElementById(
+    "installBtn"
+    ).hidden = false;
+});
+
+document.getElementById(
+"installBtn"
+).addEventListener(
+"click",
+async ()=>{
+
+    if(!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+
+    await deferredPrompt.userChoice;
+
+    deferredPrompt = null;
+
+    document.getElementById(
+    "installBtn"
+    ).hidden = true;
+});
+
+/* ==========================
+   GUIDED DIAGNOSTICS
+========================== */
+
+function startDiagnosis(){
+
+    const symptom =
+    document.getElementById(
+    "symptom"
+    ).value;
+
+    const questions =
+    document.getElementById(
+    "questions"
+    );
+
+    const result =
+    document.getElementById(
+    "diagnosticResult"
+    );
+
+    result.innerHTML = "";
+
+    if(symptom === "nostart"){
+
+        questions.innerHTML = `
+        <p>Does the machine have spark?</p>
+
+        <button onclick="sparkAnswer(true)">
+        Yes
+        </button>
+
+        <button onclick="sparkAnswer(false)">
+        No
+        </button>
+        `;
+    }
+
+    else if(symptom === "dies"){
+
+        result.innerHTML =
+        "Inspect fuel filter, tank vent, carburetor diaphragm, and fuel lines.";
+    }
+
+    else if(symptom === "nospark"){
+
+        result.innerHTML =
+        "Inspect spark plug, ignition module, wiring, and stop switch.";
+    }
+
+    else if(symptom === "overheat"){
+
+        result.innerHTML =
+        "Inspect cooling fins, fuel mixture, carburetor settings, and air flow.";
+    }
+}
+
+function sparkAnswer(hasSpark){
+
+    if(!hasSpark){
+
+        document.getElementById(
+        "questions"
+        ).innerHTML = "";
+
+        document.getElementById(
+        "diagnosticResult"
+        ).innerHTML =
+        "Likely ignition problem. Check plug, kill switch, wiring, and ignition coil.";
+
+        return;
+    }
+
+    document.getElementById(
+    "questions"
+    ).innerHTML = `
+    <p>Compression Above 120 PSI?</p>
+
+    <button onclick="compressionAnswer(true)">
+    Yes
+    </button>
+
+    <button onclick="compressionAnswer(false)">
+    No
+    </button>
+    `;
+}
+
+function compressionAnswer(good){
+
+    document.getElementById(
+    "questions"
+    ).innerHTML = "";
+
+    if(!good){
+
+        document.getElementById(
+        "diagnosticResult"
+        ).innerHTML =
+        "Engine problem detected. Inspect piston, rings, cylinder, and crank seals.";
+
+        return;
+    }
+
+    document.getElementById(
+    "diagnosticResult"
+    ).innerHTML =
+    "Spark and compression are good. Inspect fuel delivery, carburetor, and filter.";
+}
+
+/* ==========================
+   SERVICE LOG STORAGE
+========================== */
+
+function saveLog(){
+
+    const machine =
+    document.getElementById(
+    "machine"
+    ).value;
+
+    const notes =
+    document.getElementById(
+    "notes"
+    ).value;
+
+    const logs =
+    JSON.parse(
+    localStorage.getItem(
+    "serviceLogs"
+    ) || "[]");
+
+    logs.push({
+
+        date:
+        new Date()
+        .toISOString(),
+
+        machine,
+        notes
+    });
+
+    localStorage.setItem(
+    "serviceLogs",
+    JSON.stringify(logs)
+    );
+
+    alert("Service Log Saved");
+}
+
+/* ==========================
+   EXPORT LOGS
+========================== */
+
+function exportLogs(){
+
+    const logs =
+    JSON.parse(
+    localStorage.getItem(
+    "serviceLogs"
+    ) || "[]"
+    );
+
+    const blob =
+    new Blob(
+    [JSON.stringify(logs,null,2)],
+    {type:"application/json"}
+    );
+
+    const url =
+    URL.createObjectURL(blob);
+
+    const a =
+    document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+    "RedMaxServiceLogs.json";
+
+    a.click();
+}
+
+/* ==========================
+   FULL BACKUP
+========================== */
+
+function backupLogs(){
+
+    const backup = {
+
+        exported:
+        new Date()
+        .toISOString(),
+
+        logs:
+        JSON.parse(
+        localStorage.getItem(
+        "serviceLogs"
+        ) || "[]"
+        )
+    };
+
+    const blob =
+    new Blob(
+    [JSON.stringify(
+    backup,null,2)],
+    {type:"application/json"}
+    );
+
+    const url =
+    URL.createObjectURL(blob);
+
+    const a =
+    document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+    "RedMaxBackup.json";
+
+    a.click();
+}
+
+/* ==========================
+   RESTORE BACKUP
+========================== */
+
+function restoreBackup(){
+
+    const file =
+    document.getElementById(
+    "restoreFile"
+    ).files[0];
+
+    if(!file){
+
+        alert("Select a backup file.");
+        return;
+    }
+
+    const reader =
+    new FileReader();
+
+    reader.onload =
+    function(){
+
+        const backup =
+        JSON.parse(
+        reader.result
+        );
+
+        localStorage.setItem(
+        "serviceLogs",
+        JSON.stringify(
+        backup.logs || []
+        )
+        );
+
+        alert(
+        "Backup Restored"
+        );
+    };
+
+    reader.readAsText(
+    file
+    );
+}
+
+/* ==========================
+   SERVICE WORKER
+========================== */
+
+if("serviceWorker" in navigator){
+
+    navigator.serviceWorker.register(
+    "./service-worker.js"
+    );
+}
+
 </script>
-<script src="https://unpkg.com/html5-qrcode"></script>
 
 </body>
 </html>

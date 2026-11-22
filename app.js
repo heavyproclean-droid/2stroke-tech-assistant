@@ -1,3 +1,101 @@
+function startDiagnosis() {
+
+ const symptom =
+ document.getElementById("symptom").value;
+
+ if(symptom === "nostart") {
+
+  document.getElementById("questions").innerHTML = `
+    <p>Does it have spark?</p>
+
+    <button onclick="sparkAnswer(true)">
+      Yes
+    </button>
+
+    <button onclick="sparkAnswer(false)">
+      No
+    </button>
+  `;
+ }
+}
+
+function sparkAnswer(hasSpark){
+
+ if(!hasSpark){
+
+   document.getElementById("questions").innerHTML =
+   "Check ignition module, kill switch, spark plug.";
+
+   return;
+ }
+
+ document.getElementById("questions").innerHTML = `
+   <p>Compression above 120 PSI?</p>
+
+   <button onclick="compressionAnswer(true)">
+   Yes
+   </button>
+
+   <button onclick="compressionAnswer(false)">
+   No
+   </button>
+ `;
+}
+
+function compressionAnswer(good){
+
+ if(!good){
+
+  document.getElementById("questions").innerHTML =
+  "Possible scored cylinder, worn rings, leaking gasket.";
+
+  return;
+ }
+
+ document.getElementById("questions").innerHTML =
+ "Inspect fuel system, carburetor, and fuel filter.";
+}
+
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+
+  deferredPrompt = e;
+
+  document.getElementById("installBtn").hidden = false;
+});
+
+document.getElementById("installBtn").addEventListener("click", async () => {
+
+  document.getElementById("installBtn").hidden = true;
+
+  deferredPrompt.prompt();
+
+  const result = await deferredPrompt.userChoice;
+
+  console.log(result.outcome);
+
+  deferredPrompt = null;
+});
+
+function updateConnectionStatus() {
+    const status = document.getElementById("connectionStatus");
+
+    if (navigator.onLine) {
+        status.textContent = "🟢 Online";
+        status.className = "status online";
+    } else {
+        status.textContent = "🔴 Offline";
+        status.className = "status offline";
+    }
+}
+
+window.addEventListener("online", updateConnectionStatus);
+window.addEventListener("offline", updateConnectionStatus);
+
+updateConnectionStatus();
+
 function startQRScanner(){
 
 const scanner =

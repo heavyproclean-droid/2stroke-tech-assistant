@@ -213,7 +213,7 @@ function exportLogs() {
         document.createElement("a");
 
     link.href = url;
-    link.download = "RedMaxServiceLogs.json";
+    link.download = "TechAssistantLogs.json";
     link.click();
 
     URL.revokeObjectURL(url);
@@ -243,7 +243,7 @@ function backupLogs() {
         document.createElement("a");
 
     link.href = url;
-    link.download = "RedMaxBackup.json";
+    link.download = "TechAssistantBackup.json";
     link.click();
 
     URL.revokeObjectURL(url);

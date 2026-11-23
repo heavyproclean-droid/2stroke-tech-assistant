@@ -1,6 +1,6 @@
 {
-  "name": "RedMax Tech Assistant",
-  "short_name": "RedMax",
+  "name": "2-Stroke Tech Assistant",
+  "short_name": "2-stroke",
   "description": "Field technician diagnostics and service logging for RedMax equipment.",
   "start_url": "./",
   "scope": "./",

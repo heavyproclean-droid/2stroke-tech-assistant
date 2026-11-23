@@ -1,87 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="style.css">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>2-Stroke Tech Assistant</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#d32f2f">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#d32f2f">
+  <title>2-Stroke Tech Assistant</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <main class="container">
+    <div id="connectionStatus" class="status online" role="status">🟢 Online</div>
 
-<div class="container">
+    <h1>2-Stroke Tech Assistant</h1>
 
-<div id="connectionStatus" class="status online">
-🟢 Online
-</div>
+    <button id="installBtn" type="button" hidden>📲 Install App</button>
 
-<h1>2-Stroke Tech Assistant</h1>
+    <section class="card" aria-labelledby="diagnosticsHeading">
+      <h2 id="diagnosticsHeading">Guided Diagnostics</h2>
 
-<button id="installBtn" hidden>
-📲 Install App
-</button>
+      <label for="symptom">Starting symptom</label>
+      <select id="symptom">
+        <option value="">Select Symptom</option>
+        <option value="nostart">Won't Start</option>
+        <option value="dies">Starts Then Dies</option>
+        <option value="nospark">No Spark</option>
+        <option value="overheat">Overheating</option>
+        <option value="bogging">Bogging or Loss of Power</option>
+        <option value="smoke">Excessive Smoke</option>
+      </select>
 
-<div class="card">
-<h2>Guided Diagnostics</h2>
+      <button id="beginDiagnosis" type="button">Begin Diagnosis</button>
 
-<select id="symptom">
-<option value="">Select Symptom</option>
-<option value="nostart">Won't Start</option>
-<option value="dies">Starts Then Dies</option>
-<option value="nospark">No Spark</option>
-<option value="overheat">Overheating</option>
-</select>
+      <div id="questions" aria-live="polite"></div>
+      <div id="diagnosticResult" aria-live="polite"></div>
+    </section>
 
-<button onclick="startDiagnosis()">
-Begin Diagnosis
-</button>
+    <section class="card" aria-labelledby="serviceLogHeading">
+      <h2 id="serviceLogHeading">Service Log</h2>
 
-<div id="questions"></div>
+      <label for="machine">Machine</label>
+      <input id="machine" placeholder="Enter model or equipment ID">
 
-<div id="diagnosticResult"></div>
-</div>
+      <label for="notes">Repair Notes</label>
+      <textarea id="notes" rows="5"></textarea>
 
-<div class="card">
-<h2>Service Log</h2>
+      <button id="saveLog" type="button">Save Log</button>
+      <button id="exportLogs" type="button">Export Logs</button>
+      <button id="backupLogs" type="button">Backup All Data</button>
 
-<label>Machine</label>
-<input id="machine" placeholder="Enter model">
+      <hr>
 
-<label>Repair Notes</label>
-<textarea id="notes" rows="5"></textarea>
+      <label for="restoreFile">Restore backup file</label>
+      <input type="file" id="restoreFile" accept="application/json,.json">
+      <button id="restoreBackup" type="button">Restore Backup</button>
+    </section>
+  </main>
 
-<button onclick="saveLog()">
-Save Log
-</button>
-
-<button onclick="exportLogs()">
-Export Logs
-</button>
-
-<button onclick="backupLogs()">
-Backup All Data
-</button>
-
-<hr>
-
-<input type="file"
-       id="restoreFile"
-       accept=".json">
-
-<button onclick="restoreBackup()">
-Restore Backup
-</button>
-</div>
-
-</div>
-
-
-<script src="app.js"></script>
-
+  <script src="diagnostics.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

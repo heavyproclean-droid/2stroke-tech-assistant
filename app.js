@@ -1,294 +1,209 @@
-/* =====================================
-   REDMAX TECH ASSISTANT
-   APP.JS
-===================================== */
+/* 2-Stroke Tech Assistant */
 
-/* ---------- ONLINE STATUS ---------- */
+let deferredPrompt = null;
+
+function escapeHTML(value) {
+  const element = document.createElement("span");
+  element.textContent = String(value);
+  return element.innerHTML;
+}
 
 function updateConnectionStatus() {
-    const status = document.getElementById("connectionStatus");
+  const status = document.getElementById("connectionStatus");
+  if (!status) return;
 
-    if (!status) return;
-
-    if (navigator.onLine) {
-        status.textContent = "🟢 Online";
-        status.className = "status online";
-    } else {
-        status.textContent = "🔴 Offline";
-        status.className = "status offline";
-    }
+  const online = navigator.onLine;
+  status.textContent = online ? "🟢 Online" : "🔴 Offline";
+  status.className = online ? "status online" : "status offline";
 }
 
 window.addEventListener("online", updateConnectionStatus);
 window.addEventListener("offline", updateConnectionStatus);
 
-/* ---------- INSTALL PROMPT ---------- */
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredPrompt = event;
+  document.getElementById("installBtn").hidden = false;
+});
 
-let deferredPrompt = null;
-
-window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-
-    deferredPrompt = e;
-
-    const installBtn = document.getElementById("installBtn");
-
-    if (installBtn) {
-        installBtn.hidden = false;
-    }
+window.addEventListener("appinstalled", () => {
+  deferredPrompt = null;
+  document.getElementById("installBtn").hidden = true;
 });
 
 async function installApp() {
-
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-
-    await deferredPrompt.userChoice;
-
-    deferredPrompt = null;
-
-    document.getElementById("installBtn").hidden = true;
+  if (!deferredPrompt) return;
+  await deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById("installBtn").hidden = true;
 }
 
-/* ---------- DIAGNOSTICS ---------- */
+function showDiagnosticNode(nodeId) {
+  const node = typeof diagnosticTree === "undefined" ? null : diagnosticTree[nodeId];
+  const questions = document.getElementById("questions");
+  const result = document.getElementById("diagnosticResult");
+
+  if (!node) {
+    result.textContent = "Diagnostic information is unavailable. Restart diagnosis and try again.";
+    questions.innerHTML = "";
+    return;
+  }
+
+  result.innerHTML = "";
+
+  if (node.question) {
+    questions.innerHTML = `<p>${escapeHTML(node.question)}</p>` + node.options.map((option, index) =>
+      `<button type="button" class="diagnostic-option" data-next="${escapeHTML(option.next)}" data-index="${index}">${escapeHTML(option.text)}</button>`
+    ).join("");
+
+    questions.querySelectorAll(".diagnostic-option").forEach((button) => {
+      button.addEventListener("click", () => showDiagnosticNode(button.dataset.next));
+    });
+    return;
+  }
+
+  questions.innerHTML = "";
+  result.innerHTML = `
+    <strong>${escapeHTML(node.diagnosis)}</strong>
+    ${node.probability ? `<div>Estimated likelihood: ${escapeHTML(node.probability)}%</div>` : ""}
+    <ul>${node.repairs.map((repair) => `<li>${escapeHTML(repair)}</li>`).join("")}</ul>
+  `;
+}
 
 function startDiagnosis() {
+  const symptom = document.getElementById("symptom").value;
+  const result = document.getElementById("diagnosticResult");
+  document.getElementById("questions").innerHTML = "";
+  result.innerHTML = "";
 
-    const symptom =
-        document.getElementById("symptom").value;
+  const routes = {
+    nostart: "no_start_spark",
+    dies: "starts_dies_idle",
+    nospark: "ignition_failure",
+    overheat: "air_filter",
+    bogging: "bog_wot_filter",
+    smoke: "smoke_mix"
+  };
 
-    const questions =
-        document.getElementById("questions");
+  if (!symptom || !routes[symptom]) {
+    alert("Select a symptom before beginning diagnosis.");
+    return;
+  }
 
-    const result =
-        document.getElementById("diagnosticResult");
-
-    questions.innerHTML = "";
-    result.innerHTML = "";
-
-    switch (symptom) {
-
-        case "nostart":
-
-            questions.innerHTML = `
-                <p>Does the engine have spark?</p>
-
-                <button onclick="sparkAnswer(true)">Yes</button>
-                <button onclick="sparkAnswer(false)">No</button>
-            `;
-            break;
-
-        case "dies":
-
-            result.innerHTML =
-                "Inspect fuel filter, carburetor diaphragm, fuel lines, and tank vent.";
-
-            break;
-
-        case "nospark":
-
-            result.innerHTML =
-                "Inspect spark plug, ignition coil, wiring, and stop switch.";
-
-            break;
-
-        case "overheat":
-
-            result.innerHTML =
-                "Inspect cooling fins, air flow, exhaust restriction, and fuel mixture.";
-
-            break;
-    }
+  showDiagnosticNode(routes[symptom]);
 }
-
-function sparkAnswer(hasSpark) {
-
-    const questions =
-        document.getElementById("questions");
-
-    const result =
-        document.getElementById("diagnosticResult");
-
-    if (!hasSpark) {
-
-        questions.innerHTML = "";
-
-        result.innerHTML =
-            "Ignition fault suspected. Check spark plug, kill switch, wiring, and ignition module.";
-
-        return;
-    }
-
-    questions.innerHTML = `
-        <p>Compression above 120 PSI?</p>
-
-        <button onclick="compressionAnswer(true)">
-            Yes
-        </button>
-
-        <button onclick="compressionAnswer(false)">
-            No
-        </button>
-    `;
-}
-
-function compressionAnswer(goodCompression) {
-
-    document.getElementById("questions").innerHTML = "";
-
-    if (!goodCompression) {
-
-        document.getElementById("diagnosticResult").innerHTML =
-            "Low compression. Inspect piston, cylinder, rings, crank seals, and gaskets.";
-
-        return;
-    }
-
-    document.getElementById("diagnosticResult").innerHTML =
-        "Spark and compression are OK. Focus on carburetor, fuel delivery, fuel filter, and fuel lines.";
-}
-
-/* ---------- SERVICE LOG ---------- */
 
 function getLogs() {
-    return JSON.parse(
-        localStorage.getItem("serviceLogs") || "[]"
-    );
+  try {
+    const stored = localStorage.getItem("serviceLogs");
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error("Unable to read service logs:", error);
+    return [];
+  }
 }
 
 function saveLogs(logs) {
-    localStorage.setItem(
-        "serviceLogs",
-        JSON.stringify(logs)
-    );
+  if (!Array.isArray(logs)) throw new TypeError("Logs must be an array.");
+  localStorage.setItem("serviceLogs", JSON.stringify(logs));
 }
 
 function saveLog() {
+  const machine = document.getElementById("machine").value.trim();
+  const notes = document.getElementById("notes").value.trim();
 
-    const machine =
-        document.getElementById("machine").value.trim();
+  if (!machine || !notes) {
+    alert("Machine and notes are required.");
+    return;
+  }
 
-    const notes =
-        document.getElementById("notes").value.trim();
+  const logs = getLogs();
+  logs.push({ machine, notes, date: new Date().toISOString() });
 
-    if (!machine || !notes) {
-        alert("Machine and notes are required.");
-        return;
-    }
-
-    const logs = getLogs();
-
-    logs.push({
-        machine,
-        notes,
-        date: new Date().toISOString()
-    });
-
+  try {
     saveLogs(logs);
+  } catch (error) {
+    console.error("Unable to save service log:", error);
+    alert("The log could not be saved in this browser.");
+    return;
+  }
 
-    alert("Log saved.");
-
-    document.getElementById("machine").value = "";
-    document.getElementById("notes").value = "";
+  document.getElementById("machine").value = "";
+  document.getElementById("notes").value = "";
+  alert("Log saved.");
 }
 
-/* ---------- EXPORT ---------- */
+function downloadJSON(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 function exportLogs() {
-
-    const logs = getLogs();
-
-    const blob = new Blob(
-        [JSON.stringify(logs, null, 2)],
-        {
-            type: "application/json"
-        }
-    );
-
-    const url =
-        URL.createObjectURL(blob);
-
-    const link =
-        document.createElement("a");
-
-    link.href = url;
-    link.download = "TechAssistantLogs.json";
-    link.click();
-
-    URL.revokeObjectURL(url);
+  downloadJSON("TechAssistantLogs.json", getLogs());
 }
-
-/* ---------- BACKUP ---------- */
 
 function backupLogs() {
-
-    const backup = {
-        exportDate:
-            new Date().toISOString(),
-        logs: getLogs()
-    };
-
-    const blob = new Blob(
-        [JSON.stringify(backup, null, 2)],
-        {
-            type: "application/json"
-        }
-    );
-
-    const url =
-        URL.createObjectURL(blob);
-
-    const link =
-        document.createElement("a");
-
-    link.href = url;
-    link.download = "TechAssistantBackup.json";
-    link.click();
-
-    URL.revokeObjectURL(url);
+  downloadJSON("TechAssistantBackup.json", {
+    app: "2-Stroke Tech Assistant",
+    exportDate: new Date().toISOString(),
+    logs: getLogs()
+  });
 }
-
-/* ---------- RESTORE ---------- */
 
 function restoreBackup() {
+  const file = document.getElementById("restoreFile").files[0];
+  if (!file) {
+    alert("Select a backup file.");
+    return;
+  }
 
-    const file =
-        document.getElementById("restoreFile").files[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const parsed = JSON.parse(String(reader.result));
+      const logs = Array.isArray(parsed) ? parsed : parsed.logs;
 
-    if (!file) {
-        alert("Select a backup file.");
-        return;
+      if (!Array.isArray(logs) || !logs.every((log) =>
+        log && typeof log.machine === "string" && typeof log.notes === "string"
+      )) {
+        throw new Error("Invalid backup structure");
+      }
+
+      saveLogs(logs);
+      document.getElementById("restoreFile").value = "";
+      alert("Backup restored.");
+    } catch (error) {
+      console.error("Unable to restore backup:", error);
+      alert("This file is not a valid 2-Stroke Tech Assistant backup.");
     }
-
-    const reader = new FileReader();
-
-    reader.onload = () => {
-
-        const backup =
-            JSON.parse(reader.result);
-
-        saveLogs(backup.logs || []);
-
-        alert("Backup restored.");
-    };
-
-    reader.readAsText(file);
+  };
+  reader.onerror = () => alert("The backup file could not be read.");
+  reader.readAsText(file);
 }
 
-/* ---------- STARTUP ---------- */
-
 window.addEventListener("load", () => {
+  updateConnectionStatus();
 
-    updateConnectionStatus();
+  document.getElementById("installBtn").addEventListener("click", installApp);
+  document.getElementById("beginDiagnosis").addEventListener("click", startDiagnosis);
+  document.getElementById("saveLog").addEventListener("click", saveLog);
+  document.getElementById("exportLogs").addEventListener("click", exportLogs);
+  document.getElementById("backupLogs").addEventListener("click", backupLogs);
+  document.getElementById("restoreBackup").addEventListener("click", restoreBackup);
 
-    const installBtn =
-        document.getElementById("installBtn");
-
-    if (installBtn) {
-        installBtn.addEventListener(
-            "click",
-            installApp
-        );
-    }
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js").catch((error) => {
+      console.error("Service worker registration failed:", error);
+    });
+  }
 });

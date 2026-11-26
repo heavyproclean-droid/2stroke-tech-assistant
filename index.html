@@ -4,22 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#d32f2f">
+
   <title>2-Stroke Tech Assistant</title>
+
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
   <main class="container">
-    <div id="connectionStatus" class="status online" role="status">🟢 Online</div>
+
+    <div id="connectionStatus" class="status online">
+      🟢 Online
+    </div>
 
     <h1>2-Stroke Tech Assistant</h1>
 
-    <button id="installBtn" type="button" hidden>📲 Install App</button>
+    <button id="installBtn" type="button" hidden>
+      📲 Install App
+    </button>
 
-    <section class="card" aria-labelledby="diagnosticsHeading">
-      <h2 id="diagnosticsHeading">Guided Diagnostics</h2>
+    <!-- GUIDED DIAGNOSTICS -->
 
-      <label for="symptom">Starting symptom</label>
+    <section class="card">
+
+      <h2>Guided Diagnostics</h2>
+
+      <label for="symptom">Starting Symptom</label>
+
       <select id="symptom">
         <option value="">Select Symptom</option>
         <option value="nostart">Won't Start</option>
@@ -30,34 +43,233 @@
         <option value="smoke">Excessive Smoke</option>
       </select>
 
-      <button id="beginDiagnosis" type="button">Begin Diagnosis</button>
+      <button id="beginDiagnosis" type="button">
+        Begin Diagnosis
+      </button>
 
-      <div id="questions" aria-live="polite"></div>
-      <div id="diagnosticResult" aria-live="polite"></div>
+      <div id="questions"></div>
+
+      <div id="diagnosticResult"></div>
+
     </section>
 
-    <section class="card" aria-labelledby="serviceLogHeading">
-      <h2 id="serviceLogHeading">Service Log</h2>
+    <!-- ADVANCED DIAGNOSTICS -->
 
-      <label for="machine">Machine</label>
-      <input id="machine" placeholder="Enter model or equipment ID">
+    <section class="card">
 
-      <label for="notes">Repair Notes</label>
-      <textarea id="notes" rows="5"></textarea>
+      <h2>Advanced Diagnostics (Coming Soon)</h2>
 
-      <button id="saveLog" type="button">Save Log</button>
-      <button id="exportLogs" type="button">Export Logs</button>
-      <button id="backupLogs" type="button">Backup All Data</button>
+      <p>
+        This section will use weighted symptom analysis,
+        compression readings and repair scoring.
+      </p>
+
+      <label>
+        <input type="checkbox" id="noStart">
+        Won't Start
+      </label>
+
+      <label>
+        <input type="checkbox" id="hardStart">
+        Hard Starting
+      </label>
+
+      <label>
+        <input type="checkbox" id="startsThenDies">
+        Starts Then Dies
+      </label>
+
+      <label>
+        <input type="checkbox" id="noIdle">
+        Will Not Idle
+      </label>
+
+      <label>
+        <input type="checkbox" id="bogUnderThrottle">
+        Bogs Under Throttle
+      </label>
+
+      <label>
+        <input type="checkbox" id="lowPower">
+        Low Power
+      </label>
+
+      <label>
+        <input type="checkbox" id="runsOnlyOnChoke">
+        Runs Only On Choke
+      </label>
+
+      <label>
+        <input type="checkbox" id="runsOnPrime">
+        Runs On Primed Fuel
+      </label>
+
+      <label>
+        <input type="checkbox" id="dryPlug">
+        Dry Plug
+      </label>
+
+      <label>
+        <input type="checkbox" id="wetPlug">
+        Wet Plug
+      </label>
+
+      <label>
+        <input type="checkbox" id="surgesAtIdle">
+        Surges At Idle
+      </label>
+
+      <label>
+        <input type="checkbox" id="highIdle">
+        High Idle
+      </label>
+
+      <label>
+        <input type="checkbox" id="overheats">
+        Overheats
+      </label>
+
+      <label>
+        <input type="checkbox" id="diesWhenHot">
+        Dies When Hot
+      </label>
+
+      <label>
+        <input type="checkbox" id="backfires">
+        Backfires
+      </label>
+
+      <label>
+        <input type="checkbox" id="floodsEasily">
+        Floods Easily
+      </label>
 
       <hr>
 
-      <label for="restoreFile">Restore backup file</label>
-      <input type="file" id="restoreFile" accept="application/json,.json">
-      <button id="restoreBackup" type="button">Restore Backup</button>
+      <label for="sparkPresent">
+        Spark Present
+      </label>
+
+      <select id="sparkPresent">
+        <option value="">Unknown</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+
+      <label for="fuelFresh">
+        Fuel Fresh
+      </label>
+
+      <select id="fuelFresh">
+        <option value="">Unknown</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+
+      <label for="fuelAtPlug">
+        Fuel At Plug
+      </label>
+
+      <select id="fuelAtPlug">
+        <option value="">Unknown</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+
+      <label for="carbAdjustedRecently">
+        Carb Recently Adjusted
+      </label>
+
+      <select id="carbAdjustedRecently">
+        <option value="">Unknown</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+
+      <label for="compression">
+        Compression (PSI)
+      </label>
+
+      <input
+        id="compression"
+        type="number"
+        min="0"
+        placeholder="145">
+
+      <button
+        id="runAdvancedDiagnosis"
+        type="button"
+        disabled>
+        Advanced Diagnostics Coming Soon
+      </button>
+
+      <div id="advancedResults"></div>
+
     </section>
+
+    <!-- SERVICE LOG -->
+
+    <section class="card">
+
+      <h2>Service Log</h2>
+
+      <label for="machine">
+        Machine
+      </label>
+
+      <input
+        id="machine"
+        placeholder="Enter model or equipment ID">
+
+      <label for="notes">
+        Repair Notes
+      </label>
+
+      <textarea
+        id="notes"
+        rows="5"></textarea>
+
+      <button
+        id="saveLog"
+        type="button">
+        Save Log
+      </button>
+
+      <button
+        id="exportLogs"
+        type="button">
+        Export Logs
+      </button>
+
+      <button
+        id="backupLogs"
+        type="button">
+        Backup All Data
+      </button>
+
+      <hr>
+
+      <label for="restoreFile">
+        Restore Backup File
+      </label>
+
+      <input
+        type="file"
+        id="restoreFile"
+        accept=".json,application/json">
+
+      <button
+        id="restoreBackup"
+        type="button">
+        Restore Backup
+      </button>
+
+    </section>
+
   </main>
 
   <script src="diagnostics.js"></script>
   <script src="app.js"></script>
+
 </body>
 </html>

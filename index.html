@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,258 +14,408 @@
 
 <body>
 
+  <!-- SIDE MENU -->
+
+  <nav id="sideMenu" class="side-menu">
+
+    <button id="closeMenu" class="close-menu">
+      ✕
+    </button>
+
+    <ul>
+
+      <li data-view="homeView">🏠 Home</li>
+
+      <li data-view="diagnosticsView">
+        🔍 Guided Diagnostics
+      </li>
+
+      <li data-view="advancedView">
+        🧠 Advanced Diagnostics
+      </li>
+
+      <li data-view="audioView">
+        🎤 Audio Diagnostics
+      </li>
+
+      <li data-view="serviceLogView">
+        📝 Service Logs
+      </li>
+
+      <li data-view="knowledgeView">
+        📚 Knowledge Base
+      </li>
+
+      <li data-view="settingsView">
+        ⚙ Settings
+      </li>
+
+      <li data-view="proView">
+        ⭐ Unlock Pro
+      </li>
+
+      <li data-view="aboutView">
+        ℹ About
+      </li>
+
+      <li data-view="disclaimerView">
+        ⚠ Disclaimer
+      </li>
+
+    </ul>
+
+  </nav>
+
   <main class="container">
+
+    <!-- HEADER -->
+
+    <header class="app-header">
+
+      <button id="menuBtn" class="menu-btn">
+        ☰
+      </button>
+
+      <h1>2-Stroke Tech Assistant</h1>
+
+    </header>
 
     <div id="connectionStatus" class="status online">
       🟢 Online
     </div>
 
-    <h1>2-Stroke Tech Assistant</h1>
-
     <button id="installBtn" type="button" hidden>
       📲 Install App
     </button>
 
+    <!-- HOME -->
+
+    <div id="homeView" class="view">
+
+      <section class="card">
+
+        <h2>Quick Actions</h2>
+
+        <button data-view="diagnosticsView">
+          🔍 Guided Diagnostics
+        </button>
+
+        <button data-view="advancedView">
+          🧠 Advanced Diagnostics
+        </button>
+
+        <button data-view="audioView">
+          🎤 Audio Diagnostics
+        </button>
+
+        <button data-view="serviceLogView">
+          📝 Service Logs
+        </button>
+
+        <button data-view="knowledgeView">
+          📚 Knowledge Base
+        </button>
+
+      </section>
+
+    </div>
+
     <!-- GUIDED DIAGNOSTICS -->
 
-    <section class="card">
+    <div id="diagnosticsView" class="view hidden">
 
-      <h2>Guided Diagnostics</h2>
+      <section class="card">
 
-      <label for="symptom">Starting Symptom</label>
+        <h2>Guided Diagnostics</h2>
 
-      <select id="symptom">
-        <option value="">Select Symptom</option>
-        <option value="nostart">Won't Start</option>
-        <option value="dies">Starts Then Dies</option>
-        <option value="nospark">No Spark</option>
-        <option value="overheat">Overheating</option>
-        <option value="bogging">Bogging or Loss of Power</option>
-        <option value="smoke">Excessive Smoke</option>
-      </select>
+        <label for="symptom">Starting Symptom</label>
 
-      <button id="beginDiagnosis" type="button">
-        Begin Diagnosis
-      </button>
+        <select id="symptom">
 
-      <div id="questions"></div>
+          <option value="">Select Symptom</option>
 
-      <div id="diagnosticResult"></div>
+          <option value="nostart">
+            Won't Start
+          </option>
 
-    </section>
+          <option value="dies">
+            Starts Then Dies
+          </option>
+
+          <option value="nospark">
+            No Spark
+          </option>
+
+          <option value="overheat">
+            Overheating
+          </option>
+
+          <option value="bogging">
+            Bogging or Loss of Power
+          </option>
+
+          <option value="smoke">
+            Excessive Smoke
+          </option>
+
+        </select>
+
+        <button id="beginDiagnosis" type="button">
+          Begin Diagnosis
+        </button>
+
+        <div id="questions"></div>
+
+        <div id="diagnosticResult"></div>
+
+      </section>
+
+    </div>
 
     <!-- ADVANCED DIAGNOSTICS -->
 
-    <section class="card">
+    <div id="advancedView" class="view hidden">
 
-      <h2>Advanced Diagnostics (Coming Soon)</h2>
+      <section class="card">
 
-      <p>
-        This section will use weighted symptom analysis,
-        compression readings and repair scoring.
-      </p>
+        <h2>Advanced Diagnostics</h2>
 
-      <label>
-        <input type="checkbox" id="noStart">
-        Won't Start
-      </label>
+        <p>
+          Weighted symptom analysis, compression scoring,
+          and confidence-based diagnostics.
+        </p>
 
-      <label>
-        <input type="checkbox" id="hardStart">
-        Hard Starting
-      </label>
+        <button
+          id="runAdvancedDiagnosis"
+          type="button"
+          disabled>
 
-      <label>
-        <input type="checkbox" id="startsThenDies">
-        Starts Then Dies
-      </label>
+          Advanced Diagnostics Coming Soon
 
-      <label>
-        <input type="checkbox" id="noIdle">
-        Will Not Idle
-      </label>
+        </button>
 
-      <label>
-        <input type="checkbox" id="bogUnderThrottle">
-        Bogs Under Throttle
-      </label>
+        <div id="advancedResults"></div>
 
-      <label>
-        <input type="checkbox" id="lowPower">
-        Low Power
-      </label>
+      </section>
 
-      <label>
-        <input type="checkbox" id="runsOnlyOnChoke">
-        Runs Only On Choke
-      </label>
+    </div>
 
-      <label>
-        <input type="checkbox" id="runsOnPrime">
-        Runs On Primed Fuel
-      </label>
+    <!-- AUDIO -->
 
-      <label>
-        <input type="checkbox" id="dryPlug">
-        Dry Plug
-      </label>
+    <div id="audioView" class="view hidden">
 
-      <label>
-        <input type="checkbox" id="wetPlug">
-        Wet Plug
-      </label>
+      <section class="card">
 
-      <label>
-        <input type="checkbox" id="surgesAtIdle">
-        Surges At Idle
-      </label>
+        <h2>Audio Diagnostics</h2>
 
-      <label>
-        <input type="checkbox" id="highIdle">
-        High Idle
-      </label>
+        <p>
+          Record engine audio and analyze running
+          characteristics.
+        </p>
 
-      <label>
-        <input type="checkbox" id="overheats">
-        Overheats
-      </label>
+        <button id="startAudioBtn">
+          🎤 Start Recording
+        </button>
 
-      <label>
-        <input type="checkbox" id="diesWhenHot">
-        Dies When Hot
-      </label>
+        <button
+          id="stopAudioBtn"
+          disabled>
 
-      <label>
-        <input type="checkbox" id="backfires">
-        Backfires
-      </label>
+          Stop Recording
 
-      <label>
-        <input type="checkbox" id="floodsEasily">
-        Floods Easily
-      </label>
+        </button>
 
-      <hr>
+        <canvas
+          id="audioVisualizer"
+          width="300"
+          height="100">
+        </canvas>
 
-      <label for="sparkPresent">
-        Spark Present
-      </label>
+        <div id="audioResults">
 
-      <select id="sparkPresent">
-        <option value="">Unknown</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-      </select>
+          Audio Diagnostics Coming Soon
 
-      <label for="fuelFresh">
-        Fuel Fresh
-      </label>
+        </div>
 
-      <select id="fuelFresh">
-        <option value="">Unknown</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-      </select>
+      </section>
 
-      <label for="fuelAtPlug">
-        Fuel At Plug
-      </label>
-
-      <select id="fuelAtPlug">
-        <option value="">Unknown</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-      </select>
-
-      <label for="carbAdjustedRecently">
-        Carb Recently Adjusted
-      </label>
-
-      <select id="carbAdjustedRecently">
-        <option value="">Unknown</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-      </select>
-
-      <label for="compression">
-        Compression (PSI)
-      </label>
-
-      <input
-        id="compression"
-        type="number"
-        min="0"
-        placeholder="145">
-
-      <button
-        id="runAdvancedDiagnosis"
-        type="button"
-        disabled>
-        Advanced Diagnostics Coming Soon
-      </button>
-
-      <div id="advancedResults"></div>
-
-    </section>
+    </div>
 
     <!-- SERVICE LOG -->
 
-    <section class="card">
+    <div id="serviceLogView" class="view hidden">
 
-      <h2>Service Log</h2>
+      <section class="card">
 
-      <label for="machine">
-        Machine
-      </label>
+        <h2>Service Log</h2>
 
-      <input
-        id="machine"
-        placeholder="Enter model or equipment ID">
+        <label for="machine">
+          Machine
+        </label>
 
-      <label for="notes">
-        Repair Notes
-      </label>
+        <input
+          id="machine"
+          placeholder="Enter model or equipment ID">
 
-      <textarea
-        id="notes"
-        rows="5"></textarea>
+        <label for="notes">
+          Repair Notes
+        </label>
 
-      <button
-        id="saveLog"
-        type="button">
-        Save Log
-      </button>
+        <textarea
+          id="notes"
+          rows="5"></textarea>
 
-      <button
-        id="exportLogs"
-        type="button">
-        Export Logs
-      </button>
+        <button id="saveLog">
+          Save Log
+        </button>
 
-      <button
-        id="backupLogs"
-        type="button">
-        Backup All Data
-      </button>
+        <button id="exportLogs">
+          Export Logs
+        </button>
 
-      <hr>
+        <button id="backupLogs">
+          Backup All Data
+        </button>
 
-      <label for="restoreFile">
-        Restore Backup File
-      </label>
+      </section>
 
-      <input
-        type="file"
-        id="restoreFile"
-        accept=".json,application/json">
+    </div>
 
-      <button
-        id="restoreBackup"
-        type="button">
-        Restore Backup
-      </button>
+    <!-- KNOWLEDGE BASE -->
 
-    </section>
+    <div id="knowledgeView" class="view hidden">
+
+      <section class="card">
+
+        <h2>Knowledge Base</h2>
+
+        <button>Carburetors</button>
+
+        <button>Exploded Views</button>
+
+        <button>Fuel Systems</button>
+
+        <button>Ignition Systems</button>
+
+        <button>Common Failures</button>
+
+      </section>
+
+    </div>
+
+    <!-- SETTINGS -->
+
+    <div id="settingsView" class="view hidden">
+
+      <section class="card">
+
+        <h2>Settings</h2>
+
+        <label>
+          <input type="checkbox">
+          Dark Mode
+        </label>
+
+        <label>
+          <input type="checkbox">
+          Large Text
+        </label>
+
+        <label>
+          <input type="checkbox">
+          High Contrast
+        </label>
+
+        <label>
+          <input type="checkbox">
+          One-Hand Mode
+        </label>
+
+      </section>
+
+    </div>
+
+    <!-- PRO -->
+
+    <div id="proView" class="view hidden">
+
+      <section class="card">
+
+        <h2>Pro Features</h2>
+
+        <ul>
+
+          <li>Advanced Diagnostics</li>
+
+          <li>Audio Analysis</li>
+
+          <li>Equipment Database</li>
+
+          <li>Exploded Views</li>
+
+          <li>Service Log Backup</li>
+
+          <li>Failure Photo Database</li>
+
+        </ul>
+
+        <button>
+          Unlock Pro
+        </button>
+
+      </section>
+
+    </div>
+
+    <!-- ABOUT -->
+
+    <div id="aboutView" class="view hidden">
+
+      <section class="card">
+
+        <h2>About</h2>
+
+        <p>2-Stroke Tech Assistant</p>
+
+        <p>Version 1.0</p>
+
+        <p>
+          Built for chainsaws, trimmers,
+          blowers, brushcutters and edgers.
+        </p>
+
+      </section>
+
+    </div>
+
+    <!-- DISCLAIMER -->
+
+    <div id="disclaimerView" class="view hidden">
+
+      <section class="card">
+
+        <h2>Disclaimer</h2>
+
+        <p>
+          This application is intended as a
+          troubleshooting aid only.
+        </p>
+
+        <p>
+          Always follow manufacturer service
+          procedures and safety recommendations.
+        </p>
+
+        <p>
+          The developer is not responsible
+          for injury, equipment damage,
+          or losses resulting from use
+          of this application.
+        </p>
+
+      </section>
+
+    </div>
 
   </main>
 
@@ -272,4 +423,5 @@
   <script src="app.js"></script>
 
 </body>
+
 </html>

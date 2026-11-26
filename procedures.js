@@ -8,8 +8,8 @@ export const procedures = {
     tools: [
       "Fuel line pliers",
       "Flashlight",
-      "Replacement fuel lines",
-      "Replacement fuel filter"
+      "Replacement fuel filter",
+      "Replacement fuel lines"
     ],
 
     safety: [
@@ -21,8 +21,8 @@ export const procedures = {
       "Drain old fuel from the tank.",
       "Inspect fuel lines for cracks, splits, or deterioration.",
       "Inspect the fuel filter for contamination.",
-      "Check that the tank vent is clear and functioning properly.",
-      "Ensure fuel flows freely through the fuel line.",
+      "Inspect the fuel tank vent.",
+      "Verify fuel flows freely through the fuel line.",
       "Replace damaged fuel system components.",
       "Refill with fresh properly mixed fuel.",
       "Test engine operation."
@@ -40,22 +40,22 @@ export const procedures = {
     ],
 
     safety: [
-      "Wear eye protection.",
+      "Wear safety glasses.",
       "Avoid inhaling carburetor cleaner."
     ],
 
     steps: [
-      "Remove the air filter cover.",
-      "Remove the carburetor from the engine.",
-      "Inspect the fuel inlet screen.",
-      "Inspect metering and pump diaphragms.",
-      "Clean passages with approved carburetor cleaner.",
+      "Remove air filter cover.",
+      "Remove carburetor from engine.",
+      "Inspect fuel inlet screen.",
+      "Inspect metering diaphragm.",
+      "Inspect pump diaphragm.",
+      "Clean internal fuel passages.",
       "Blow passages clean with compressed air.",
-      "Install rebuild kit components if necessary.",
+      "Replace worn components if needed.",
       "Reassemble carburetor.",
-      "Reinstall on engine.",
       "Reset carburetor to baseline settings.",
-      "Start engine and perform final tuning."
+      "Start engine and perform final adjustments."
     ]
   },
 
@@ -63,7 +63,7 @@ export const procedures = {
     title: "Carburetor Adjustment",
 
     tools: [
-      "Proper carburetor adjustment tool",
+      "Carburetor adjustment tool",
       "Tachometer (optional)"
     ],
 
@@ -82,7 +82,7 @@ export const procedures = {
       "Adjust low-speed circuit for smooth idle.",
       "Adjust for crisp throttle response.",
       "Adjust high-speed circuit if required.",
-      "Verify engine accelerates cleanly and idles properly."
+      "Verify proper idle and acceleration."
     ]
   },
 
@@ -100,7 +100,7 @@ export const procedures = {
 
     steps: [
       "Remove spark plug.",
-      "Inspect spark plug condition.",
+      "Inspect plug condition.",
       "Dry or replace spark plug.",
       "Pull starter rope several times to clear excess fuel.",
       "Install spark plug.",
@@ -113,4 +113,146 @@ export const procedures = {
     title: "Ignition System Diagnosis",
 
     tools: [
-      "Spark tester
+      "Spark tester",
+      "Feeler gauge",
+      "Multimeter"
+    ],
+
+    safety: [
+      "Avoid contact with spark plug lead during testing."
+    ],
+
+    steps: [
+      "Inspect spark plug condition.",
+      "Verify spark plug gap.",
+      "Test for spark using a spark tester.",
+      "Disconnect kill-switch wire and retest.",
+      "Inspect ignition wiring.",
+      "Inspect flywheel key.",
+      "Verify ignition coil air gap.",
+      "Replace ignition module if necessary."
+    ]
+  },
+
+  lowCompression: {
+    title: "Compression Diagnosis",
+
+    tools: [
+      "Compression tester",
+      "Flashlight"
+    ],
+
+    safety: [
+      "Remove spark plug before testing."
+    ],
+
+    steps: [
+      "Install compression tester.",
+      "Open throttle fully.",
+      "Pull starter until reading stabilizes.",
+      "Record reading.",
+      "Compare reading to manufacturer specifications.",
+      "Inspect piston through exhaust port.",
+      "Inspect piston rings.",
+      "Inspect cylinder condition.",
+      "Perform leakdown test if necessary."
+    ]
+  },
+
+  crankcaseLeak: {
+    title: "Crankcase Leak Testing",
+
+    tools: [
+      "Pressure and vacuum tester",
+      "Block-off plates"
+    ],
+
+    safety: [
+      "Perform testing with engine off."
+    ],
+
+    steps: [
+      "Remove carburetor and muffler.",
+      "Install intake and exhaust block-off plates.",
+      "Connect pressure tester.",
+      "Pressurize crankcase.",
+      "Monitor pressure loss.",
+      "Perform vacuum test.",
+      "Inspect crank seals.",
+      "Inspect intake boot.",
+      "Inspect carburetor mounting gaskets.",
+      "Replace failed components.",
+      "Retest system."
+    ]
+  },
+
+  pluggedExhaust: {
+    title: "Exhaust Restriction Inspection",
+
+    tools: [
+      "Socket set",
+      "Wire brush"
+    ],
+
+    safety: [
+      "Allow muffler to cool before servicing."
+    ],
+
+    steps: [
+      "Remove muffler.",
+      "Inspect spark arrestor screen.",
+      "Inspect muffler outlet.",
+      "Remove carbon buildup.",
+      "Clean or replace spark arrestor screen.",
+      "Reinstall muffler.",
+      "Verify power restoration."
+    ]
+  },
+
+  impulseFailure: {
+    title: "Impulse System Inspection",
+
+    tools: [
+      "Flashlight",
+      "Small pick"
+    ],
+
+    safety: [
+      "Inspect engine with ignition disabled."
+    ],
+
+    steps: [
+      "Locate impulse line.",
+      "Inspect for cracks or deterioration.",
+      "Inspect impulse fittings.",
+      "Verify impulse passage is clear.",
+      "Replace damaged impulse line.",
+      "Verify pressure pulse reaches carburetor.",
+      "Test engine operation."
+    ]
+  },
+
+  fuelContamination: {
+    title: "Fuel Contamination Repair",
+
+    tools: [
+      "Drain container",
+      "Replacement fuel filter"
+    ],
+
+    safety: [
+      "Dispose of fuel properly."
+    ],
+
+    steps: [
+      "Drain fuel tank completely.",
+      "Inspect for water or contamination.",
+      "Clean fuel tank if needed.",
+      "Replace fuel filter.",
+      "Inspect fuel lines.",
+      "Refill with fresh properly mixed fuel.",
+      "Start engine and verify operation."
+    ]
+  }
+
+};

@@ -1,209 +1,490 @@
-/* 2-Stroke Tech Assistant */
+/* =====================================
+   2-STROKE TECH ASSISTANT
+   APP.JS
+===================================== */
 
-let deferredPrompt = null;
+/* =====================================
+   MENU / NAVIGATION
+===================================== */
 
-function escapeHTML(value) {
-  const element = document.createElement("span");
-  element.textContent = String(value);
-  return element.innerHTML;
-}
+const menuBtn = document.getElementById("menuBtn");
+const closeMenu = document.getElementById("closeMenu");
+const sideMenu = document.getElementById("sideMenu");
 
-function updateConnectionStatus() {
-  const status = document.getElementById("connectionStatus");
-  if (!status) return;
-
-  const online = navigator.onLine;
-  status.textContent = online ? "🟢 Online" : "🔴 Offline";
-  status.className = online ? "status online" : "status offline";
-}
-
-window.addEventListener("online", updateConnectionStatus);
-window.addEventListener("offline", updateConnectionStatus);
-
-window.addEventListener("beforeinstallprompt", (event) => {
-  event.preventDefault();
-  deferredPrompt = event;
-  document.getElementById("installBtn").hidden = false;
-});
-
-window.addEventListener("appinstalled", () => {
-  deferredPrompt = null;
-  document.getElementById("installBtn").hidden = true;
-});
-
-async function installApp() {
-  if (!deferredPrompt) return;
-  await deferredPrompt.prompt();
-  await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  document.getElementById("installBtn").hidden = true;
-}
-
-function showDiagnosticNode(nodeId) {
-  const node = typeof diagnosticTree === "undefined" ? null : diagnosticTree[nodeId];
-  const questions = document.getElementById("questions");
-  const result = document.getElementById("diagnosticResult");
-
-  if (!node) {
-    result.textContent = "Diagnostic information is unavailable. Restart diagnosis and try again.";
-    questions.innerHTML = "";
-    return;
-  }
-
-  result.innerHTML = "";
-
-  if (node.question) {
-    questions.innerHTML = `<p>${escapeHTML(node.question)}</p>` + node.options.map((option, index) =>
-      `<button type="button" class="diagnostic-option" data-next="${escapeHTML(option.next)}" data-index="${index}">${escapeHTML(option.text)}</button>`
-    ).join("");
-
-    questions.querySelectorAll(".diagnostic-option").forEach((button) => {
-      button.addEventListener("click", () => showDiagnosticNode(button.dataset.next));
-    });
-    return;
-  }
-
-  questions.innerHTML = "";
-  result.innerHTML = `
-    <strong>${escapeHTML(node.diagnosis)}</strong>
-    ${node.probability ? `<div>Estimated likelihood: ${escapeHTML(node.probability)}%</div>` : ""}
-    <ul>${node.repairs.map((repair) => `<li>${escapeHTML(repair)}</li>`).join("")}</ul>
-  `;
-}
-
-function startDiagnosis() {
-  const symptom = document.getElementById("symptom").value;
-  const result = document.getElementById("diagnosticResult");
-  document.getElementById("questions").innerHTML = "";
-  result.innerHTML = "";
-
-  const routes = {
-    nostart: "no_start_spark",
-    dies: "starts_dies_idle",
-    nospark: "ignition_failure",
-    overheat: "air_filter",
-    bogging: "bog_wot_filter",
-    smoke: "smoke_mix"
-  };
-
-  if (!symptom || !routes[symptom]) {
-    alert("Select a symptom before beginning diagnosis.");
-    return;
-  }
-
-  showDiagnosticNode(routes[symptom]);
-}
-
-function getLogs() {
-  try {
-    const stored = localStorage.getItem("serviceLogs");
-    if (!stored) return [];
-    const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    console.error("Unable to read service logs:", error);
-    return [];
-  }
-}
-
-function saveLogs(logs) {
-  if (!Array.isArray(logs)) throw new TypeError("Logs must be an array.");
-  localStorage.setItem("serviceLogs", JSON.stringify(logs));
-}
-
-function saveLog() {
-  const machine = document.getElementById("machine").value.trim();
-  const notes = document.getElementById("notes").value.trim();
-
-  if (!machine || !notes) {
-    alert("Machine and notes are required.");
-    return;
-  }
-
-  const logs = getLogs();
-  logs.push({ machine, notes, date: new Date().toISOString() });
-
-  try {
-    saveLogs(logs);
-  } catch (error) {
-    console.error("Unable to save service log:", error);
-    alert("The log could not be saved in this browser.");
-    return;
-  }
-
-  document.getElementById("machine").value = "";
-  document.getElementById("notes").value = "";
-  alert("Log saved.");
-}
-
-function downloadJSON(filename, data) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-function exportLogs() {
-  downloadJSON("TechAssistantLogs.json", getLogs());
-}
-
-function backupLogs() {
-  downloadJSON("TechAssistantBackup.json", {
-    app: "2-Stroke Tech Assistant",
-    exportDate: new Date().toISOString(),
-    logs: getLogs()
+if (menuBtn) {
+  menuBtn.addEventListener("click", () => {
+    sideMenu.classList.add("open");
   });
 }
 
-function restoreBackup() {
-  const file = document.getElementById("restoreFile").files[0];
-  if (!file) {
-    alert("Select a backup file.");
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const parsed = JSON.parse(String(reader.result));
-      const logs = Array.isArray(parsed) ? parsed : parsed.logs;
-
-      if (!Array.isArray(logs) || !logs.every((log) =>
-        log && typeof log.machine === "string" && typeof log.notes === "string"
-      )) {
-        throw new Error("Invalid backup structure");
-      }
-
-      saveLogs(logs);
-      document.getElementById("restoreFile").value = "";
-      alert("Backup restored.");
-    } catch (error) {
-      console.error("Unable to restore backup:", error);
-      alert("This file is not a valid 2-Stroke Tech Assistant backup.");
-    }
-  };
-  reader.onerror = () => alert("The backup file could not be read.");
-  reader.readAsText(file);
+if (closeMenu) {
+  closeMenu.addEventListener("click", () => {
+    sideMenu.classList.remove("open");
+  });
 }
 
-window.addEventListener("load", () => {
-  updateConnectionStatus();
+/* =====================================
+   VIEW MANAGEMENT
+===================================== */
 
-  document.getElementById("installBtn").addEventListener("click", installApp);
-  document.getElementById("beginDiagnosis").addEventListener("click", startDiagnosis);
-  document.getElementById("saveLog").addEventListener("click", saveLog);
-  document.getElementById("exportLogs").addEventListener("click", exportLogs);
-  document.getElementById("backupLogs").addEventListener("click", backupLogs);
-  document.getElementById("restoreBackup").addEventListener("click", restoreBackup);
+const views = document.querySelectorAll(".view");
 
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js").catch((error) => {
-      console.error("Service worker registration failed:", error);
-    });
+function showView(viewId) {
+
+  views.forEach(view => {
+    view.classList.add("hidden");
+  });
+
+  const selectedView =
+    document.getElementById(viewId);
+
+  if (selectedView) {
+    selectedView.classList.remove("hidden");
   }
-});
+
+  sideMenu.classList.remove("open");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+document
+  .querySelectorAll("[data-view]")
+  .forEach(item => {
+
+    item.addEventListener("click", () => {
+
+      const target =
+        item.dataset.view;
+
+      showView(target);
+
+    });
+
+  });
+
+/* =====================================
+   ONLINE / OFFLINE STATUS
+===================================== */
+
+const connectionStatus =
+  document.getElementById("connectionStatus");
+
+function updateConnectionStatus() {
+
+  if (!connectionStatus) return;
+
+  if (navigator.onLine) {
+
+    connectionStatus.textContent =
+      "🟢 Online";
+
+    connectionStatus.classList.remove("offline");
+    connectionStatus.classList.add("online");
+
+  } else {
+
+    connectionStatus.textContent =
+      "🔴 Offline";
+
+    connectionStatus.classList.remove("online");
+    connectionStatus.classList.add("offline");
+  }
+}
+
+window.addEventListener(
+  "online",
+  updateConnectionStatus
+);
+
+window.addEventListener(
+  "offline",
+  updateConnectionStatus
+);
+
+updateConnectionStatus();
+
+/* =====================================
+   PWA INSTALL
+===================================== */
+
+let deferredPrompt;
+
+const installBtn =
+  document.getElementById("installBtn");
+
+window.addEventListener(
+  "beforeinstallprompt",
+  (event) => {
+
+    event.preventDefault();
+
+    deferredPrompt = event;
+
+    if (installBtn) {
+      installBtn.hidden = false;
+    }
+  }
+);
+
+if (installBtn) {
+
+  installBtn.addEventListener(
+    "click",
+    async () => {
+
+      if (!deferredPrompt) return;
+
+      deferredPrompt.prompt();
+
+      const choice =
+        await deferredPrompt.userChoice;
+
+      console.log(
+        "Install choice:",
+        choice.outcome
+      );
+
+      deferredPrompt = null;
+
+      installBtn.hidden = true;
+    }
+  );
+}
+
+/* =====================================
+   SERVICE LOGS
+===================================== */
+
+const saveLogBtn =
+  document.getElementById("saveLog");
+
+const exportLogsBtn =
+  document.getElementById("exportLogs");
+
+const backupLogsBtn =
+  document.getElementById("backupLogs");
+
+function getLogs() {
+
+  return JSON.parse(
+    localStorage.getItem("serviceLogs")
+  ) || [];
+}
+
+function saveLogs(logs) {
+
+  localStorage.setItem(
+    "serviceLogs",
+    JSON.stringify(logs)
+  );
+}
+
+if (saveLogBtn) {
+
+  saveLogBtn.addEventListener(
+    "click",
+    () => {
+
+      const machine =
+        document.getElementById("machine")
+          ?.value
+          .trim();
+
+      const notes =
+        document.getElementById("notes")
+          ?.value
+          .trim();
+
+      if (!machine) {
+
+        alert(
+          "Please enter a machine name."
+        );
+
+        return;
+      }
+
+      const logs = getLogs();
+
+      logs.push({
+
+        machine,
+
+        notes,
+
+        date:
+          new Date().toLocaleString()
+
+      });
+
+      saveLogs(logs);
+
+      alert("Service log saved.");
+
+      document.getElementById("machine").value = "";
+      document.getElementById("notes").value = "";
+    }
+  );
+}
+
+/* =====================================
+   EXPORT LOGS
+===================================== */
+
+if (exportLogsBtn) {
+
+  exportLogsBtn.addEventListener(
+    "click",
+    () => {
+
+      const logs = getLogs();
+
+      const blob = new Blob(
+        [JSON.stringify(logs, null, 2)],
+        {
+          type: "application/json"
+        }
+      );
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+
+      link.download =
+        "service-logs.json";
+
+      link.click();
+
+      URL.revokeObjectURL(url);
+    }
+  );
+}
+
+/* =====================================
+   BACKUP ENTIRE APP DATA
+===================================== */
+
+if (backupLogsBtn) {
+
+  backupLogsBtn.addEventListener(
+    "click",
+    () => {
+
+      const backupData = {
+
+        serviceLogs:
+          getLogs(),
+
+        exported:
+          new Date().toISOString(),
+
+        version:
+          "1.0"
+
+      };
+
+      const blob = new Blob(
+
+        [
+          JSON.stringify(
+            backupData,
+            null,
+            2
+          )
+        ],
+
+        {
+          type:
+            "application/json"
+        }
+      );
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const link =
+        document.createElement("a");
+
+      link.href = url;
+
+      link.download =
+        "2stroke-assistant-backup.json";
+
+      link.click();
+
+      URL.revokeObjectURL(url);
+
+    }
+  );
+}
+
+/* =====================================
+   AUDIO PLACEHOLDER
+===================================== */
+
+const startAudioBtn =
+  document.getElementById(
+    "startAudioBtn"
+  );
+
+const stopAudioBtn =
+  document.getElementById(
+    "stopAudioBtn"
+  );
+
+if (startAudioBtn) {
+
+  startAudioBtn.addEventListener(
+    "click",
+    () => {
+
+      alert(
+        "Audio Diagnostics coming soon."
+      );
+    }
+  );
+}
+
+if (stopAudioBtn) {
+
+  stopAudioBtn.addEventListener(
+    "click",
+    () => {
+
+      console.log(
+        "Future audio recording stop."
+      );
+    }
+  );
+}
+
+/* =====================================
+   RESTORE BACKUP
+   (for future file picker)
+===================================== */
+
+const restoreButton =
+  document.getElementById(
+    "restoreBackup"
+  );
+
+if (restoreButton) {
+
+  restoreButton.addEventListener(
+    "click",
+    () => {
+
+      const fileInput =
+        document.getElementById(
+          "restoreFile"
+        );
+
+      const file =
+        fileInput?.files?.[0];
+
+      if (!file) {
+
+        alert(
+          "Select a backup file."
+        );
+
+        return;
+      }
+
+      const reader =
+        new FileReader();
+
+      reader.onload = (event) => {
+
+        try {
+
+          const data =
+            JSON.parse(
+              event.target.result
+            );
+
+          if (
+            data.serviceLogs
+          ) {
+
+            localStorage.setItem(
+              "serviceLogs",
+              JSON.stringify(
+                data.serviceLogs
+              )
+            );
+
+            alert(
+              "Backup restored."
+            );
+
+          } else {
+
+            throw new Error();
+          }
+
+        } catch {
+
+          alert(
+            "Invalid backup file."
+          );
+
+        }
+      };
+
+      reader.readAsText(file);
+    }
+  );
+}
+
+/* =====================================
+   SERVICE WORKER
+===================================== */
+
+if (
+  "serviceWorker" in navigator
+) {
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      navigator.serviceWorker
+        .register(
+          "./service-worker.js"
+        )
+        .then(() => {
+
+          console.log(
+            "Service Worker Registered"
+          );
+
+        })
+        .catch(error => {
+
+          console.error(
+            "Service Worker Error:",
+            error
+          );
+
+        });
+    }
+  );
+}
+
+/* =====================================
+   APP STARTUP
+===================================== */
+
+showView("homeView");
+
+console.log(
+  "2-Stroke Tech Assistant Loaded"
+);

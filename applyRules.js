@@ -11,7 +11,7 @@ export function applyRules(
 
     // Rule must match value if specified
     if (
-      rule.hasOwnProperty("value") &&
+      Object.prototype.hasOwnProperty.call(rule, "value") &&
       symptomValue !== rule.value
     ) {
       return;
@@ -19,7 +19,7 @@ export function applyRules(
 
     // Standard true/false symptom
     if (
-      !rule.hasOwnProperty("value") &&
+      !Object.prototype.hasOwnProperty.call(rule, "value") &&
       !symptomValue
     ) {
       return;

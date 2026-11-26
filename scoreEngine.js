@@ -1,10 +1,12 @@
 // scoreEngine.js
 
-import { rules } from "../data/rules.js";
-import { evidenceRules } from "../data/evidenceRules.js";
+import { rules } from "./rules.js";
+import { evidenceRules } from "./evidenceRules.js";
+import { causes } from "./causes.js";
+import { repairs } from "./repairs.js";
+import { procedures } from "./procedures.js";
+import { applyRules } from "./applyRules.js";
 import { scoreCompression } from "./compressionRules.js";
-import { causes } from "../data/causes.js";
-import { repairs } from "../data/repairs.js";
 
 export function scoreEngine(diagnosticState) {
 
@@ -15,11 +17,19 @@ export function scoreEngine(diagnosticState) {
     scores[cause] = 0;
   });
 
-  // Apply primary symptom rules
-  applyRules(diagnosticState, rules, scores);
+  // Apply symptom rules
+  applyRules(
+    diagnosticState,
+    rules,
+    scores
+  );
 
-  // Apply advanced evidence rules
-  applyRules(diagnosticState, evidenceRules, scores);
+  // Apply evidence rules
+  applyRules(
+    diagnosticState,
+    evidenceRules,
+    scores
+  );
 
   // Apply compression scoring
   scoreCompression(
@@ -27,34 +37,51 @@ export function scoreEngine(diagnosticState) {
     scores
   );
 
-  // Convert to ranked list
+  // Build ranked results
   const rankedResults = Object.entries(scores)
-   .map(([id, score]) => ({
-  id,
-  name: causes[id]?.name || id,
-  score,
 
-  inspections: repairs[id]?.inspections || [],
+    .map(([id, score]) => ({
 
-  tests: repairs[id]?.tests || [],
+      id,
 
-  repairs: repairs[id]?.repairs || [],
+      name: causes[id]?.name || id,
 
-  difficulty: repairs[id]?.difficulty || "Unknown",
+      score,
 
-  repairTime: repairs[id]?.repairTime || "Unknown"
-}))
+      inspections:
+        repairs[id]?.inspections || [],
+
+      tests:
+        repairs[id]?.tests || [],
+
+      repairs:
+        repairs[id]?.repairs || [],
+
+      difficulty:
+        repairs[id]?.difficulty || "Unknown",
+
+      repairTime:
+        repairs[id]?.repairTime || "Unknown",
+
+      procedure:
+        procedures[id] || null
+
+    }))
 
     .filter(result => result.score > 0)
+
     .sort((a, b) => b.score - a.score);
 
-  // Add confidence percentages
-  const highestScore = rankedResults[0]?.score || 1;
+  // Calculate confidence percentages
+  const highestScore =
+    rankedResults[0]?.score || 1;
 
   rankedResults.forEach(result => {
+
     result.confidence = Math.round(
       (result.score / highestScore) * 100
     );
+
   });
 
   return rankedResults;

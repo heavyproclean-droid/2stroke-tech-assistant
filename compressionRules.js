@@ -3,7 +3,9 @@ export function scoreCompression(
   scores
 ) {
 
-  if (!psi) return;
+  if (psi === null || psi === undefined) {
+    return;
+  }
 
   if (psi < 90) {
 

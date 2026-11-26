@@ -1,110 +1,156 @@
+/* ==========================
+   GLOBAL
+========================== */
+
 * {
   box-sizing: border-box;
-}
-
-:root {
-  --primary: #c62828;
-  --primary-dark: #a31515;
-  --success: #2e7d32;
-
-  --background: #f4f6f8;
-  --card: #ffffff;
-
-  --text: #1f2937;
-  --text-light: #6b7280;
-
-  --border: #d1d5db;
-
-  --shadow:
-    0 4px 12px rgba(0, 0, 0, 0.08);
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  padding: 20px;
-
-  font-family:
-    "Segoe UI",
-    Tahoma,
-    Geneva,
-    Verdana,
-    sans-serif;
-
-  background: var(--background);
-  color: var(--text);
+  background: #121212;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
 }
 
 .container {
   max-width: 900px;
   margin: auto;
+  padding: 1rem;
 }
 
-h1 {
-  text-align: center;
-  color: var(--primary);
-  margin-bottom: 5px;
+.hidden {
+  display: none;
 }
 
-h2 {
-  color: var(--primary);
-  margin-top: 0;
-  margin-bottom: 15px;
+/* ==========================
+   HEADER
+========================== */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
-h3 {
-  margin-top: 20px;
-  color: var(--text);
+.app-header h1 {
+  font-size: 1.6rem;
+  color: #ff4444;
 }
 
-/* ---------------------------
-   STATUS BAR
---------------------------- */
+.menu-btn {
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* ==========================
+   STATUS
+========================== */
 
 .status {
-  padding: 12px;
-  margin-bottom: 20px;
-
-  text-align: center;
-
-  border-radius: 10px;
-
-  color: #fff;
-  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-weight: bold;
 }
 
 .online {
-  background: var(--success);
+  background: #1b5e20;
 }
 
 .offline {
-  background: var(--primary);
+  background: #c62828;
 }
 
-/* ---------------------------
+/* ==========================
+   SIDE MENU
+========================== */
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: #1e1e1e;
+  z-index: 9999;
+  transition: left 0.3s ease;
+  overflow-y: auto;
+  border-right: 2px solid #333;
+}
+
+.side-menu.open {
+  left: 0;
+}
+
+.close-menu {
+  width: 100%;
+  text-align: right;
+  font-size: 1.5rem;
+  border: none;
+  background: none;
+  color: white;
+  padding: 15px;
+  cursor: pointer;
+}
+
+.side-menu ul {
+  list-style: none;
+}
+
+.side-menu li {
+  padding: 15px 20px;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.side-menu li:hover {
+  background: #333;
+}
+
+.side-menu li:active {
+  background: #444;
+}
+
+/* ==========================
+   VIEWS
+========================== */
+
+.view {
+  width: 100%;
+}
+
+/* ==========================
    CARDS
---------------------------- */
+========================== */
 
 .card {
-  background: var(--card);
-
-  padding: 24px;
-
+  background: #1f1f1f;
+  border-radius: 12px;
+  padding: 20px;
   margin-bottom: 20px;
-
-  border-radius: 14px;
-
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
 }
 
-/* ---------------------------
-   FORM ELEMENTS
---------------------------- */
+.card h2 {
+  margin-bottom: 15px;
+  color: #ff5252;
+}
+
+/* ==========================
+   FORMS
+========================== */
 
 label {
   display: block;
-
-  font-weight: 600;
-
+  margin-top: 15px;
   margin-bottom: 6px;
 }
 
@@ -112,183 +158,129 @@ input,
 select,
 textarea {
   width: 100%;
-
   padding: 12px;
-
-  margin-bottom: 14px;
-
-  border: 1px solid var(--border);
-
+  border: none;
   border-radius: 8px;
-
-  font-size: 16px;
-
-  background: #fff;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-
-  border-color: var(--primary);
-
-  box-shadow:
-    0 0 0 3px rgba(198, 40, 40, 0.2);
+  background: #2b2b2b;
+  color: white;
+  margin-bottom: 10px;
 }
 
 textarea {
   resize: vertical;
-  min-height: 120px;
 }
 
-/* ---------------------------
+/* ==========================
    BUTTONS
---------------------------- */
+========================== */
 
 button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
   border: none;
-
-  border-radius: 10px;
-
-  padding: 14px;
-
-  margin-bottom: 10px;
-
-  background: var(--primary);
-
+  border-radius: 8px;
+  background: #d32f2f;
   color: white;
-
-  font-size: 15px;
-  font-weight: 600;
-
+  font-size: 1rem;
   cursor: pointer;
-
-  transition: all 0.2s ease;
+  transition: 0.2s;
 }
 
 button:hover {
-  background: var(--primary-dark);
-}
-
-button:active {
-  transform: scale(.98);
+  background: #f44336;
 }
 
 button:disabled {
-  opacity: .6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-#installBtn {
-  width: 100%;
-  margin-bottom: 20px;
+#homeView button {
+  margin-bottom: 12px;
 }
 
-/* ---------------------------
-   DIAGNOSTIC QUESTIONS
---------------------------- */
-
-#questions {
-  margin-top: 15px;
-}
-
-.diagnostic-option {
-  width: auto;
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
-
-/* ---------------------------
-   DIAGNOSTIC RESULT
---------------------------- */
+/* ==========================
+   DIAGNOSTIC RESULTS
+========================== */
 
 #diagnosticResult,
-#advancedResults {
-  margin-top: 20px;
+#advancedResults,
+#audioResults {
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #2b2b2b;
 }
 
-.diagnostic-result-card {
-  background: #ffffff;
+/* ==========================
+   AUDIO
+========================== */
 
-  border-left: 5px solid var(--primary);
-
-  padding: 16px;
-
-  margin-bottom: 16px;
-
-  border-radius: 10px;
-
-  box-shadow:
-    0 2px 8px rgba(0,0,0,.05);
-}
-
-.diagnostic-result-card h3 {
-  margin-top: 0;
-  color: var(--primary);
-}
-
-.confidence-bar {
+#audioVisualizer {
   width: 100%;
-  height: 10px;
-
-  background: #e5e7eb;
-
-  border-radius: 20px;
-
-  overflow: hidden;
-
-  margin-bottom: 10px;
+  height: 120px;
+  margin-top: 15px;
+  border: 2px solid #444;
+  border-radius: 8px;
+  background: #000;
 }
 
-.confidence-fill {
-  height: 100%;
+/* ==========================
+   PRO PAGE
+========================== */
 
-  background: var(--success);
-}
-
-/* ---------------------------
-   LISTS
---------------------------- */
-
-ul,
-ol {
+#proView ul {
   padding-left: 20px;
 }
 
-li {
-  margin-bottom: 6px;
+#proView li {
+  margin-bottom: 10px;
 }
 
-/* ---------------------------
-   DIVIDERS
---------------------------- */
-
-hr {
-  border: none;
-  border-top: 1px solid #ddd;
-  margin: 20px 0;
-}
-
-/* ---------------------------
+/* ==========================
    MOBILE
---------------------------- */
+========================== */
 
 @media (max-width: 768px) {
 
-  body {
+  .container {
     padding: 12px;
   }
 
-  .card {
-    padding: 18px;
+  .app-header h1 {
+    font-size: 1.3rem;
   }
 
   button {
-    width: 100%;
+    min-height: 52px;
   }
 
-  .diagnostic-option {
-    width: 100%;
+  input,
+  select,
+  textarea {
+    min-height: 48px;
   }
+}
+
+/* ==========================
+   FUTURE SETTINGS CLASSES
+========================== */
+
+.dark-mode {
+  background: #121212;
+  color: white;
+}
+
+.large-text {
+  font-size: 1.15rem;
+}
+
+.high-contrast {
+  background: black;
+  color: yellow;
+}
+
+.one-hand-mode button {
+  margin-bottom: 15px;
 }

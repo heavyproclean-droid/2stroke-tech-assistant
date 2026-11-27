@@ -1,12 +1,14 @@
 // scoreEngine.js
 
-import { rules } from "./rules.js";
-import { evidenceRules } from "./evidenceRules.js";
-import { causes } from "./causes.js";
-import { repairs } from "./repairs.js";
-import { procedures } from "./procedures.js";
+import { rules } from "../rules/rules.js";
+import { evidenceRules } from "../rules/evidenceRules.js";
+
+import { causes } from "../data/causes.js";
+import { repairs } from "../data/repairs.js";
+import { procedures } from "../data/procedures.js";
+
 import { applyRules } from "./applyRules.js";
-import { scoreCompression } from "./compressionRules.js";
+import { scoreCompression } from "../rules/compressionRules.js";
 
 export function scoreEngine(diagnosticState) {
 

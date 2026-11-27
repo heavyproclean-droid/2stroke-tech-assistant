@@ -1,7 +1,7 @@
 {
   "name": "2-Stroke Tech Assistant",
   "short_name": "2-stroke",
-  "description": "Field technician diagnostics and service logging for RedMax equipment.",
+  "description": "Field technician diagnostics and service logging for 2-stroke equipment.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -10,12 +10,12 @@
   "theme_color": "#c62828",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "assets/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "assets/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

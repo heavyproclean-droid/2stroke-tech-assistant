@@ -477,6 +477,83 @@ if (
         });
     }
   );
+
+   /* =====================================
+   GUIDED DIAGNOSTICS
+===================================== */
+
+const beginDiagnosisBtn =
+  document.getElementById("beginDiagnosis");
+
+const symptomSelect =
+  document.getElementById("symptom");
+
+const diagnosticResult =
+  document.getElementById("diagnosticResult");
+
+if (beginDiagnosisBtn) {
+
+  beginDiagnosisBtn.addEventListener(
+    "click",
+    () => {
+
+      const symptom =
+        symptomSelect?.value;
+
+      if (!symptom) {
+
+        alert(
+          "Please select a symptom."
+        );
+
+        return;
+      }
+
+      const symptomMap = {
+        nostart: "no_start_spark",
+        dies: "starts_dies_idle",
+        nospark: "ignition_failure",
+        overheat: "low_compression",
+        bogging: "bog_wot_filter",
+        smoke: "smoke_mix"
+      };
+
+      const nodeKey =
+        symptomMap[symptom];
+
+      const node =
+        window.diagnosticTree?.[nodeKey];
+
+      if (!node) {
+
+        diagnosticResult.innerHTML =
+          "<p>Diagnostic data not found.</p>";
+
+        return;
+      }
+
+      if (node.diagnosis) {
+
+        diagnosticResult.innerHTML = `
+          <h3>${node.diagnosis}</h3>
+          <p>Probability: ${node.probability}%</p>
+        `;
+
+      } else {
+
+        diagnosticResult.innerHTML = `
+          <h3>${node.question}</h3>
+          <p>
+            Guided diagnostics is being
+            rebuilt after repository cleanup.
+          </p>
+        `;
+      }
+
+    }
+  );
+
+}
 }
 
 /* =====================================

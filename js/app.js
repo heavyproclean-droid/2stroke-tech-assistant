@@ -628,7 +628,7 @@ document
 
   });
 
-}
+
 
 showView("homeView");
 

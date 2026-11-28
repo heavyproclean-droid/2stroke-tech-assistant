@@ -564,33 +564,64 @@ if (beginDiagnosisBtn) {
 /* =====================================
    APP STARTUP
 ===================================== */
-
+showView("homeView");
 /* =====================================
-   ADVANCED DIAGNOSTICS
+   ADVANCED DIAGNOSTICS TILES
 ===================================== */
 
-const advancedBtn =
-  document.getElementById(
-    "runAdvancedDiagnosis"
-  );
+const diagnosticState = {};
 
-const advancedResults =
-  document.getElementById(
-    "advancedResults"
-  );
+document
+  .querySelectorAll(".symptom-tile")
+  .forEach(tile => {
 
-if (advancedBtn) {
+    diagnosticState[
+      tile.dataset.symptom
+    ] = null;
 
-  advancedBtn.addEventListener(
-    "click",
-    () => {
+    tile.addEventListener(
+      "click",
+      () => {
 
-      advancedResults.innerHTML =
-        "<p>Advanced Diagnostics MVP coming next step.</p>";
+        const symptom =
+          tile.dataset.symptom;
 
-    }
-  );
+        const current =
+          diagnosticState[symptom];
 
+        tile.classList.remove(
+          "active",
+          "negative"
+        );
+
+        if (current === null) {
+
+          diagnosticState[symptom] = true;
+
+          tile.classList.add(
+            "active"
+          );
+
+        } else if (
+          current === true
+        ) {
+
+          diagnosticState[symptom] = false;
+
+          tile.classList.add(
+            "negative"
+          );
+
+        } else {
+
+          diagnosticState[symptom] = null;
+
+        }
+
+      }
+    );
+
+  });
 }
 
 showView("homeView");

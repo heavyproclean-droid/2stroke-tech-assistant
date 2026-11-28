@@ -460,7 +460,7 @@ const questionsContainer =
 const diagnosticResult =
   document.getElementById("diagnosticResult");
 
-function renderNode(nodeId) {
+window.renderNode = function(nodeId) {
 
   const node =
     window.diagnosticTree[nodeId];
@@ -502,32 +502,23 @@ function renderNode(nodeId) {
     question
   );
 
-  node.options.forEach(option => {
+ node.options.forEach(option => {
 
-    const button =
-      document.createElement("button");
+  questionsContainer.innerHTML += `
+    <button
+      type="button"
+      onclick="renderNode('${option.next}')"
+      style="
+        display:block;
+        width:100%;
+        margin:10px 0;
+        padding:15px;
+      ">
+      ${option.text}
+    </button>
+  `;
 
-    button.type = "button";
-
-    button.textContent =
-      option.text;
-
-    button.addEventListener(
-      "click",
-      () => {
-
-        renderNode(
-          option.next
-        );
-
-      }
-    );
-
-    questionsContainer.appendChild(
-      button
-    );
-
-  });
+});
 
 }
 

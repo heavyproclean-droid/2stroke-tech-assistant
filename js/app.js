@@ -445,42 +445,6 @@ if (restoreButton) {
 }
 
 /* =====================================
-   SERVICE WORKER
-===================================== */
-
-if (
-  "serviceWorker" in navigator
-) {
-
-  window.addEventListener(
-    "load",
-    () => {
-
-      navigator.serviceWorker
-        .register(
-          "./service-worker.js"
-        )
-        .then(() => {
-
-          console.log(
-            "Service Worker Registered"
-          );
-
-        })
-        .catch(error => {
-
-          console.error(
-            "Service Worker Error:",
-            error
-          );
-
-        });
-    }
-  );
-
-}
-
-   /* =====================================
    GUIDED DIAGNOSTICS
 ===================================== */
 
@@ -490,8 +454,82 @@ const beginDiagnosisBtn =
 const symptomSelect =
   document.getElementById("symptom");
 
+const questionsContainer =
+  document.getElementById("questions");
+
 const diagnosticResult =
   document.getElementById("diagnosticResult");
+
+function renderNode(nodeId) {
+
+  const node =
+    window.diagnosticTree[nodeId];
+
+  if (!node) return;
+
+  questionsContainer.innerHTML = "";
+  diagnosticResult.innerHTML = "";
+
+  // Final diagnosis node
+  if (node.diagnosis) {
+
+    diagnosticResult.innerHTML = `
+      <h3>${node.diagnosis}</h3>
+      <p>Probability: ${node.probability}%</p>
+      <h4>Recommended Repairs</h4>
+      <ul>
+        ${node.repairs
+          .map(
+            repair =>
+              `<li>${repair}</li>`
+          )
+          .join("")}
+      </ul>
+    `;
+
+    return;
+  }
+
+  // Question node
+
+  const question =
+    document.createElement("h3");
+
+  question.textContent =
+    node.question;
+
+  questionsContainer.appendChild(
+    question
+  );
+
+  node.options.forEach(option => {
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+
+    button.textContent =
+      option.text;
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        renderNode(
+          option.next
+        );
+
+      }
+    );
+
+    questionsContainer.appendChild(
+      button
+    );
+
+  });
+
+}
 
 if (beginDiagnosisBtn) {
 
@@ -500,7 +538,7 @@ if (beginDiagnosisBtn) {
     () => {
 
       const symptom =
-        symptomSelect?.value;
+        symptomSelect.value;
 
       if (!symptom) {
 
@@ -520,41 +558,15 @@ if (beginDiagnosisBtn) {
         smoke: "smoke_mix"
       };
 
-      const nodeKey =
+      const startNode =
         symptomMap[symptom];
 
-      const node =
-        window.diagnosticTree?.[nodeKey];
-
-      if (!node) {
-
-        diagnosticResult.innerHTML =
-          "<p>Diagnostic data not found.</p>";
-
-        return;
-      }
-
-      if (node.diagnosis) {
-
-        diagnosticResult.innerHTML = `
-          <h3>${node.diagnosis}</h3>
-          <p>Probability: ${node.probability}%</p>
-        `;
-
-      } else {
-
-        diagnosticResult.innerHTML = `
-          <h3>${node.question}</h3>
-          <p>
-            Guided diagnostics is being
-            rebuilt after repository cleanup.
-          </p>
-        `;
-      }
+      renderNode(startNode);
 
     }
   );
 
+}
 }
 
 

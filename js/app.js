@@ -565,6 +565,34 @@ if (beginDiagnosisBtn) {
    APP STARTUP
 ===================================== */
 
+/* =====================================
+   ADVANCED DIAGNOSTICS
+===================================== */
+
+const advancedBtn =
+  document.getElementById(
+    "runAdvancedDiagnosis"
+  );
+
+const advancedResults =
+  document.getElementById(
+    "advancedResults"
+  );
+
+if (advancedBtn) {
+
+  advancedBtn.addEventListener(
+    "click",
+    () => {
+
+      advancedResults.innerHTML =
+        "<p>Advanced Diagnostics MVP coming next step.</p>";
+
+    }
+  );
+
+}
+
 showView("homeView");
 
 console.log(

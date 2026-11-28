@@ -176,29 +176,91 @@
 
     <div id="advancedView" class="view hidden">
 
-      <section class="card">
+  <section class="card">
 
-        <h2>Advanced Diagnostics</h2>
+    <h2>Advanced Diagnostics</h2>
 
-        <p>
-          Weighted symptom analysis, compression scoring,
-          and confidence-based diagnostics.
-        </p>
+    <p>
+      Select every symptom that applies.
+    </p>
 
-        <button
-          id="runAdvancedDiagnosis"
-          type="button"
-          disabled>
+    <div id="advancedSymptoms">
 
-          Advanced Diagnostics Coming Soon
+      <label>
+        <input type="checkbox" id="noStart">
+        No Start
+      </label>
 
-        </button>
+      <label>
+        <input type="checkbox" id="hardStart">
+        Hard Start
+      </label>
 
-        <div id="advancedResults"></div>
+      <label>
+        <input type="checkbox" id="startsThenDies">
+        Starts Then Dies
+      </label>
 
-      </section>
+      <label>
+        <input type="checkbox" id="noIdle">
+        No Idle
+      </label>
+
+      <label>
+        <input type="checkbox" id="bogUnderThrottle">
+        Bogs Under Throttle
+      </label>
+
+      <label>
+        <input type="checkbox" id="lowPower">
+        Low Power
+      </label>
+
+      <label>
+        <input type="checkbox" id="excessiveSmoke">
+        Excessive Smoke
+      </label>
+
+      <label>
+        <input type="checkbox" id="noSpark">
+        No Spark
+      </label>
+
+      <label>
+        <input type="checkbox" id="wetPlug">
+        Wet Plug
+      </label>
+
+      <label>
+        <input type="checkbox" id="dryPlug">
+        Dry Plug
+      </label>
+
+      <label>
+        <input type="checkbox" id="runsOnlyOnChoke">
+        Runs Only On Choke
+      </label>
 
     </div>
+
+    <label>
+      Compression PSI
+    </label>
+
+    <input
+      id="compressionInput"
+      type="number"
+      placeholder="120">
+
+    <button id="runAdvancedDiagnosis">
+      Run Advanced Diagnostics
+    </button>
+
+    <div id="advancedResults"></div>
+
+  </section>
+
+</div>
 
     <!-- AUDIO -->
 

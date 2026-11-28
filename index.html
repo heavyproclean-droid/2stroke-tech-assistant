@@ -174,76 +174,84 @@
 
     <!-- ADVANCED DIAGNOSTICS -->
 
-    <div id="advancedView" class="view hidden">
+    
 
-  <section class="card">
+    <label><section class="card">
 
-    <h2>Advanced Diagnostics</h2>
+  <h2>Advanced Diagnostics</h2>
 
-    <p>
-      Select every symptom that applies.
-    </p>
+  <p>
+    Tap symptoms that are present.
+  </p>
 
-    <div id="advancedSymptoms">
+  <div id="symptomTiles" class="symptom-grid">
 
-      <label>
-        <input type="checkbox" id="noStart">
-        No Start
-      </label>
+    <button class="symptom-tile" data-symptom="noStart">
+      No Start
+    </button>
 
-      <label>
-        <input type="checkbox" id="hardStart">
-        Hard Start
-      </label>
+    <button class="symptom-tile" data-symptom="hardStart">
+      Hard Start
+    </button>
 
-      <label>
-        <input type="checkbox" id="startsThenDies">
-        Starts Then Dies
-      </label>
+    <button class="symptom-tile" data-symptom="startsThenDies">
+      Starts Then Dies
+    </button>
 
-      <label>
-        <input type="checkbox" id="noIdle">
-        No Idle
-      </label>
+    <button class="symptom-tile" data-symptom="noIdle">
+      No Idle
+    </button>
 
-      <label>
-        <input type="checkbox" id="bogUnderThrottle">
-        Bogs Under Throttle
-      </label>
+    <button class="symptom-tile" data-symptom="bogUnderThrottle">
+      Bogs Under Throttle
+    </button>
 
-      <label>
-        <input type="checkbox" id="lowPower">
-        Low Power
-      </label>
+    <button class="symptom-tile" data-symptom="lowPower">
+      Low Power
+    </button>
 
-      <label>
-        <input type="checkbox" id="excessiveSmoke">
-        Excessive Smoke
-      </label>
+    <button class="symptom-tile" data-symptom="excessiveSmoke">
+      Excessive Smoke
+    </button>
 
-      <label>
-        <input type="checkbox" id="noSpark">
-        No Spark
-      </label>
+    <button class="symptom-tile" data-symptom="noSpark">
+      No Spark
+    </button>
 
-      <label>
-        <input type="checkbox" id="wetPlug">
-        Wet Plug
-      </label>
+    <button class="symptom-tile" data-symptom="wetPlug">
+      Wet Plug
+    </button>
 
-      <label>
-        <input type="checkbox" id="dryPlug">
-        Dry Plug
-      </label>
+    <button class="symptom-tile" data-symptom="dryPlug">
+      Dry Plug
+    </button>
 
-      <label>
-        <input type="checkbox" id="runsOnlyOnChoke">
-        Runs Only On Choke
-      </label>
+    <button class="symptom-tile" data-symptom="runsOnlyOnChoke">
+      Runs Only On Choke
+    </button>
 
-    </div>
+  </div>
 
-    <label>
+  <label for="compressionInput">
+    Compression PSI
+  </label>
+
+  <input
+    id="compressionInput"
+    type="number"
+    placeholder="120">
+
+  <button
+    id="runAdvancedDiagnosis"
+    type="button">
+
+    Run Advanced Diagnostics
+
+  </button>
+
+  <div id="advancedResults"></div>
+
+</section>
       Compression PSI
     </label>
 

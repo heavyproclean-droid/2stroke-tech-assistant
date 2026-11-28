@@ -284,3 +284,27 @@ button:disabled {
 .one-hand-mode button {
   margin-bottom: 15px;
 }
+.symptom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.symptom-tile {
+  min-height: 60px;
+  border: none;
+  border-radius: 10px;
+  background: #444;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.symptom-tile.active {
+  background: #2e7d32;
+}
+
+.symptom-tile.negative {
+  background: #c62828;
+}

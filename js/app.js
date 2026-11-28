@@ -568,45 +568,45 @@ showView("homeView");
 /* =====================================
    ADVANCED DIAGNOSTICS TILES
 ===================================== */
-
 const diagnosticState = {};
 
 document
   .querySelectorAll(".symptom-tile")
   .forEach(tile => {
 
-    diagnosticState[
-      tile.dataset.symptom
-    ] = null;
+    const symptom =
+      tile.dataset.symptom;
+
+    diagnosticState[symptom] = null;
 
     tile.addEventListener(
       "click",
       () => {
 
-        const symptom =
-          tile.dataset.symptom;
-
-        const current =
+        const state =
           diagnosticState[symptom];
 
-        tile.classList.remove(
-          "active",
-          "negative"
-        );
-
-        if (current === null) {
+        if (state === null) {
 
           diagnosticState[symptom] = true;
+
+          tile.classList.remove(
+            "negative"
+          );
 
           tile.classList.add(
             "active"
           );
 
         } else if (
-          current === true
+          state === true
         ) {
 
           diagnosticState[symptom] = false;
+
+          tile.classList.remove(
+            "active"
+          );
 
           tile.classList.add(
             "negative"
@@ -616,12 +616,18 @@ document
 
           diagnosticState[symptom] = null;
 
+          tile.classList.remove(
+            "active",
+            "negative"
+          );
+
         }
 
       }
     );
 
   });
+
 }
 
 showView("homeView");
